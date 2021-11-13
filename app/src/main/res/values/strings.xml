@@ -3,7 +3,7 @@
     <string name="share">共有</string>
     <string name="text">テキスト</string>
     <string name="image">画像</string>
-    <string name="suffix_register">定型文登録</string>
+    <string name="suffix">接尾辞</string>
     <string name="inputting">入力中</string>
     <string name="registered">編集する</string>
     <string name="key_suffix">suffix</string>

@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout>
+
+    <data>
+
+        <import type="android.text.TextUtils" />
+
+        <variable
+            name="viewModel"
+            type="com.u1tramarinet.youtubemusicsharehelper.MainViewModel" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="20dp"
+        tools:context=".MainFragment">
+
+        <LinearLayout
+            android:id="@+id/preview"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginBottom="30dp"
+            android:elevation="@dimen/cardview_default_elevation"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toTopOf="@id/suffix_editing"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:id="@+id/preview_text_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/text"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/preview_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="?attr/colorSurfaceDark"
+                android:text="@{viewModel.previewText()}"
+                android:textSize="20sp"
+                tools:text="tweet" />
+
+            <TextView
+                android:id="@+id/preview_image_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="@string/image"
+                android:textSize="12sp" />
+
+            <FrameLayout
+                android:id="@+id/preview_image_background"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:background="?attr/colorSurfaceDark">
+
+                <ImageView
+                    android:id="@+id/preview_image"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:contentDescription="@null"
+                    android:scaleType="center" />
+
+            </FrameLayout>
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/suffix_input_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="30dp"
+            android:text="@string/suffix"
+            app:layout_constraintBaseline_toBaselineOf="@id/suffix_editing"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <ToggleButton
+            android:id="@+id/suffix_editing"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="30dp"
+            android:checked="@={viewModel.suffixInputEnabled()}"
+            android:onCheckedChanged="@{(button, checked) -> viewModel.updateSuffixEditing(checked)}"
+            android:textOff="@string/registered"
+            android:textOn="@string/inputting"
+            app:layout_constraintBottom_toTopOf="@id/suffix_input"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/suffix_input_title" />
+
+        <EditText
+            android:id="@+id/suffix_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="40dp"
+            android:enabled="@{viewModel.suffixInputEnabled()}"
+            android:importantForAutofill="no"
+            android:inputType="text"
+            android:text="@={viewModel.previewSuffix()}"
+            app:layout_constraintBottom_toTopOf="@id/clear_text"
+            tools:ignore="LabelFor" />
+
+        <Button
+            android:id="@+id/clear_text"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="20dp"
+            android:layout_marginBottom="10dp"
+            android:drawableLeft="@android:drawable/ic_menu_delete"
+            android:enabled="@{viewModel.clearTextButtonEnabled()}"
+            android:onClick="@{(v) -> viewModel.clearText()}"
+            android:text="@string/text"
+            app:layout_constraintBottom_toTopOf="@id/share"
+            app:layout_constraintEnd_toStartOf="@id/clear_image"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:ignore="RtlHardcoded" />
+
+        <Button
+            android:id="@+id/clear_image"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:drawableLeft="@android:drawable/ic_menu_delete"
+            android:enabled="@{viewModel.clearImageButtonEnabled()}"
+            android:onClick="@{(v) -> viewModel.clearImage()}"
+            android:text="@string/image"
+            app:layout_constraintBottom_toTopOf="@id/share"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/clear_text"
+            tools:ignore="RtlHardcoded" />
+
+        <Button
+            android:id="@+id/share"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:enabled="@{viewModel.shareButtonEnabled()}"
+            android:onClick="@{(v) -> viewModel.shareText()}"
+            android:text="@string/share"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

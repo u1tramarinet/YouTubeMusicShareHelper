@@ -4,97 +4,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="20dp"
     tools:context=".MainActivity">
 
-    <TextView
-        android:id="@+id/preview_text"
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/container"
+        android:name="androidx.navigation.fragment.NavHostFragment"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="20sp"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:text="tweet" />
-
-    <TextView
-        android:id="@+id/preview_suffix"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="20sp"
-        app:layout_constraintTop_toBottomOf="@id/preview_text" />
-
-    <ImageView
-        android:id="@+id/preview_image"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:contentDescription="@null"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/preview_suffix" />
-
-    <TextView
-        android:id="@+id/suffix_input_title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="30dp"
-        android:text="@string/suffix_register"
-        app:layout_constraintBaseline_toBaselineOf="@id/register_toggle"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <ToggleButton
-        android:id="@+id/register_toggle"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:layout_marginEnd="30dp"
-        android:textOff="@string/registered"
-        android:textOn="@string/inputting"
-        app:layout_constraintBottom_toTopOf="@id/suffix_input"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/suffix_input_title" />
-
-    <EditText
-        android:id="@+id/suffix_input"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="40dp"
-        android:importantForAutofill="no"
-        android:inputType="text"
-        app:layout_constraintBottom_toTopOf="@id/clear_text"
-        tools:ignore="LabelFor" />
-
-    <Button
-        android:id="@+id/clear_text"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="20dp"
-        android:layout_marginBottom="10dp"
-        android:drawableLeft="@android:drawable/ic_menu_delete"
-        android:text="@string/text"
-        app:layout_constraintBottom_toTopOf="@id/share"
-        app:layout_constraintEnd_toStartOf="@id/clear_image"
-        app:layout_constraintStart_toStartOf="parent"
-        tools:ignore="RtlHardcoded" />
-
-    <Button
-        android:id="@+id/clear_image"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="10dp"
-        android:drawableLeft="@android:drawable/ic_menu_delete"
-        android:text="@string/image"
-        app:layout_constraintBottom_toTopOf="@id/share"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/clear_text"
-        tools:ignore="RtlHardcoded" />
-
-    <Button
-        android:id="@+id/share"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/share"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        android:layout_height="match_parent"
+        app:defaultNavHost="true"
+        app:navGraph="@navigation/nav_graph" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
