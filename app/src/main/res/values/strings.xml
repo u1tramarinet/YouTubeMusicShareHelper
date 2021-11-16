@@ -7,4 +7,5 @@
     <string name="inputting">入力中</string>
     <string name="registered">編集する</string>
     <string name="key_suffix">suffix</string>
+    <string name="raw">無加工</string>
 </resources>

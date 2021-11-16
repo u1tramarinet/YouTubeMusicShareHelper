@@ -3,6 +3,7 @@ package com.u1tramarinet.youtubemusicsharehelper;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.content.Intent;
@@ -20,14 +21,11 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         viewModel = new ViewModelProvider(this).get(MainViewModel.class);
         viewModel.shareEvent().observe(this, this::shareText);
+        viewModel.suffixInputEnabled().observe(this, enabled -> {
+            if (!enabled) saveSuffix();
+        });
         viewModel.handleIntent(getIntent());
         viewModel.updateSuffix(obtainSavedSuffix());
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        saveSuffix();
     }
 
     @Override
@@ -42,7 +40,6 @@ public class MainActivity extends AppCompatActivity {
         intent.setType("text/plain");
         intent.putExtras(extras);
         startActivity(intent);
-        saveSuffix();
     }
 
     private void saveSuffix() {

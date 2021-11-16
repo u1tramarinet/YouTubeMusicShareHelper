@@ -13,12 +13,16 @@ import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import java.sql.Struct;
 import java.util.Optional;
 
 public class MainViewModel extends ViewModel {
 
     @NonNull
     private final MutableLiveData<String> previewMusicInfoData = new MutableLiveData<>("");
+
+    @NonNull
+    private final MutableLiveData<String> previewMusicRawData = new MutableLiveData<>("");
 
     @NonNull
     private final MutableLiveData<String> previewSuffixData = new MutableLiveData<>("");
@@ -36,6 +40,9 @@ public class MainViewModel extends ViewModel {
     private final MutableLiveData<Bundle> shareEventData = new MutableLiveData<>();
 
     @NonNull
+    private final MutableLiveData<Boolean> isPreviewTextRawData = new MutableLiveData<>();
+
+    @NonNull
     private final MediatorLiveData<Boolean> clearTextButtonEnabledData = new MediatorLiveData<>();
 
     @NonNull
@@ -47,6 +54,7 @@ public class MainViewModel extends ViewModel {
     public MainViewModel() {
         previewTextData.addSource(previewMusicInfoData, (s) -> updatePreviewText());
         previewTextData.addSource(previewSuffixData, (s) -> updatePreviewText());
+        previewTextData.addSource(isPreviewTextRawData, (b) -> updatePreviewText());
         clearTextButtonEnabledData.addSource(previewMusicInfoData, this::updateClearTextButtonEnabled);
         clearImageButtonEnabledData.addSource(previewImageUriData, this::updateClearImageButtonEnabled);
         shareButtonEnabledData.addSource(previewMusicInfoData, (s) -> updateShareButtonEnabled());
@@ -74,6 +82,11 @@ public class MainViewModel extends ViewModel {
     }
 
     @NonNull
+    public MutableLiveData<Boolean> isPreviewTextRaw() {
+        return isPreviewTextRawData;
+    }
+
+    @NonNull
     public LiveData<Boolean> clearTextButtonEnabled() {
         return clearTextButtonEnabledData;
     }
@@ -94,8 +107,11 @@ public class MainViewModel extends ViewModel {
     }
 
     public void updateSuffixEditing(boolean editing) {
-        Log.d(MainViewModel.class.getSimpleName(), "updateSuffixEditing()");
         suffixInputEnabledData.postValue(editing);
+    }
+
+    public void updateIsPreviewTextRaw(boolean isRaw) {
+        isPreviewTextRawData.postValue(isRaw);
     }
 
     public void updateSuffix(@NonNull String suffix) {
@@ -123,7 +139,9 @@ public class MainViewModel extends ViewModel {
         }
 
         if ("text/plain".equals(type)) {
-            previewMusicInfoData.postValue(parseText(intent.getExtras()));
+            Bundle extras = intent.getExtras();
+            previewMusicInfoData.postValue(parseText(extras, true));
+            previewMusicRawData.postValue(parseText(extras, false));
         } else if (type.startsWith("image/")) {
             previewImageUriData.postValue(intent.getParcelableExtra(Intent.EXTRA_STREAM));
         }
@@ -145,22 +163,29 @@ public class MainViewModel extends ViewModel {
     }
 
     @Nullable
-    private String parseText(@NonNull Bundle bundle) {
+    private String parseText(@NonNull Bundle bundle, boolean cutoff) {
         String subject = bundle.getString(Intent.EXTRA_SUBJECT, "");
         String text = bundle.getString(Intent.EXTRA_TEXT, "");
 
-        String key = "\"";
-        int beginIndex = 1;
-        int endIndex = subject.lastIndexOf(key);
-        subject = subject.substring(beginIndex, endIndex);
+        if (cutoff) {
+            subject = cutoffWasteWordsFromSubject(subject);
+        }
 
         if (subject.isEmpty() && text.isEmpty()) return null;
         if (!subject.isEmpty() && !text.isEmpty()) return subject + "\n" + text;
         return subject + text;
     }
 
+    private String cutoffWasteWordsFromSubject(@NonNull String subject) {
+        String key = "\"";
+        int beginIndex = 1;
+        int endIndex = subject.lastIndexOf(key);
+        return (beginIndex <= endIndex) ? subject.substring(beginIndex, endIndex) : subject;
+    }
+
     private void updatePreviewText() {
-        String musicInfo = Optional.ofNullable(previewMusicInfoData.getValue()).orElse("");
+        boolean isRaw = Optional.ofNullable(isPreviewTextRawData.getValue()).orElse(false);
+        String musicInfo = Optional.ofNullable(((isRaw) ? previewMusicRawData.getValue() : previewMusicInfoData.getValue())).orElse("");
         String suffix = Optional.ofNullable(previewSuffixData.getValue()).orElse("");
         Log.d(MainViewModel.class.getSimpleName(), "updatePreviewText() musicInfo=" + musicInfo + ", suffix=" + suffix);
         String spacer = "";

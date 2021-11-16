@@ -98,13 +98,24 @@
             android:id="@+id/suffix_input"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="40dp"
+            android:layout_marginBottom="20dp"
             android:enabled="@{viewModel.suffixInputEnabled()}"
             android:importantForAutofill="no"
             android:inputType="text"
             android:text="@={viewModel.previewSuffix()}"
-            app:layout_constraintBottom_toTopOf="@id/clear_text"
+            app:layout_constraintBottom_toTopOf="@id/raw"
             tools:ignore="LabelFor" />
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/raw"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="@={viewModel.isPreviewTextRaw()}"
+            android:onCheckedChanged="@{(button, checked) -> viewModel.updateIsPreviewTextRaw(checked)}"
+            android:text="@string/raw"
+            app:layout_constraintBottom_toTopOf="@id/clear_text"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
 
         <Button
             android:id="@+id/clear_text"
