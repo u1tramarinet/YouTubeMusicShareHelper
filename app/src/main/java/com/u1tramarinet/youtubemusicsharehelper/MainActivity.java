@@ -1,9 +1,7 @@
 package com.u1tramarinet.youtubemusicsharehelper;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.content.Intent;
@@ -25,7 +23,7 @@ public class MainActivity extends AppCompatActivity {
             if (!enabled) saveSuffix();
         });
         viewModel.handleIntent(getIntent());
-        viewModel.updateSuffix(obtainSavedSuffix());
+        restoreSuffix();
     }
 
     @Override
@@ -44,18 +42,15 @@ public class MainActivity extends AppCompatActivity {
 
     private void saveSuffix() {
         String suffix = viewModel.previewSuffix().getValue();
-        String current = obtainSavedSuffix();
-        if (!TextUtils.equals(current, suffix)) {
-            SharedPreferences preferences = getSharedPreferences();
-            SharedPreferences.Editor editor = preferences.edit();
-            editor.putString(getString(R.string.key_suffix), suffix);
-            editor.apply();
-        }
+        SharedPreferences preferences = getSharedPreferences();
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString(getString(R.string.key_suffix), suffix);
+        editor.apply();
     }
 
-    private String obtainSavedSuffix() {
+    private void restoreSuffix() {
         SharedPreferences preferences = getSharedPreferences();
-        return preferences.getString(getString(R.string.key_suffix), "");
+        viewModel.updateSuffix(preferences.getString(getString(R.string.key_suffix), ""));
     }
 
     private SharedPreferences getSharedPreferences() {

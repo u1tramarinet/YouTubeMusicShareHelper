@@ -13,7 +13,12 @@ import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import java.sql.Struct;
+import com.u1tramarinet.youtubemusicsharehelper.parser.Music;
+import com.u1tramarinet.youtubemusicsharehelper.parser.Other;
+import com.u1tramarinet.youtubemusicsharehelper.parser.Parser;
+import com.u1tramarinet.youtubemusicsharehelper.parser.YouTubeMusicV1;
+import com.u1tramarinet.youtubemusicsharehelper.parser.YouTubeMusicV2;
+
 import java.util.Optional;
 
 public class MainViewModel extends ViewModel {
@@ -140,8 +145,7 @@ public class MainViewModel extends ViewModel {
 
         if ("text/plain".equals(type)) {
             Bundle extras = intent.getExtras();
-            previewMusicInfoData.postValue(parseText(extras, true));
-            previewMusicRawData.postValue(parseText(extras, false));
+            parseText(extras);
         } else if (type.startsWith("image/")) {
             previewImageUriData.postValue(intent.getParcelableExtra(Intent.EXTRA_STREAM));
         }
@@ -162,25 +166,28 @@ public class MainViewModel extends ViewModel {
         shareEventData.postValue(bundle);
     }
 
-    @Nullable
-    private String parseText(@NonNull Bundle bundle, boolean cutoff) {
-        String subject = bundle.getString(Intent.EXTRA_SUBJECT, "");
-        String text = bundle.getString(Intent.EXTRA_TEXT, "");
-
-        if (cutoff) {
-            subject = cutoffWasteWordsFromSubject(subject);
+    private void parseText(@NonNull Bundle bundle) {
+        Parser[] parsers = {new YouTubeMusicV1(), new YouTubeMusicV2(), new Other()};
+        for (Parser parser : parsers) {
+            if (parser.check(bundle)) {
+                Music music = parser.parse(bundle);
+                Log.d(MainViewModel.class.getSimpleName(), music.toString());
+                previewMusicInfoData.postValue(combineMusic(music));
+                break;
+            }
         }
-
-        if (subject.isEmpty() && text.isEmpty()) return null;
-        if (!subject.isEmpty() && !text.isEmpty()) return subject + "\n" + text;
-        return subject + text;
+        previewMusicRawData.postValue(combineMusic(new Other().parse(bundle)));
     }
 
-    private String cutoffWasteWordsFromSubject(@NonNull String subject) {
-        String key = "\"";
-        int beginIndex = 1;
-        int endIndex = subject.lastIndexOf(key);
-        return (beginIndex <= endIndex) ? subject.substring(beginIndex, endIndex) : subject;
+    @NonNull
+    private String combineMusic(@NonNull Music music) {
+        return combineText(combineText(music.title, music.artist, " / "), music.url, "\n");
+    }
+
+    private String combineText(@Nullable String one, @Nullable String another, @NonNull String delimiter) {
+        if (!TextUtils.isEmpty(one) && !TextUtils.isEmpty(another))
+            return one + delimiter + another;
+        return one + another;
     }
 
     private void updatePreviewText() {

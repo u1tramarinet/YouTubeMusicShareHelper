@@ -75,9 +75,7 @@ public class MainFragment extends Fragment {
     }
 
     private void prepareToInput() {
-        // moveCursorToTai
         binding.suffixInput.setSelection(binding.suffixInput.length());
-        // Set focus
         binding.suffixInput.requestFocus();
     }
 
