@@ -16,18 +16,20 @@ import androidx.lifecycle.ViewModel;
 import com.u1tramarinet.youtubemusicsharehelper.parser.Music;
 import com.u1tramarinet.youtubemusicsharehelper.parser.Other;
 import com.u1tramarinet.youtubemusicsharehelper.parser.Parser;
-import com.u1tramarinet.youtubemusicsharehelper.parser.YouTubeMusicV1;
-import com.u1tramarinet.youtubemusicsharehelper.parser.YouTubeMusicV2;
+import com.u1tramarinet.youtubemusicsharehelper.parser.YouTubeMusic;
 
 import java.util.Optional;
 
 public class MainViewModel extends ViewModel {
 
     @NonNull
+    private final MutableLiveData<Bundle> originalPlainDataData = new MutableLiveData<>();
+
+    @NonNull
     private final MutableLiveData<String> previewMusicInfoData = new MutableLiveData<>("");
 
     @NonNull
-    private final MutableLiveData<String> previewMusicRawData = new MutableLiveData<>("");
+    private final MutableLiveData<String> previewMusicArtistData = new MutableLiveData<>("");
 
     @NonNull
     private final MutableLiveData<String> previewSuffixData = new MutableLiveData<>("");
@@ -57,7 +59,8 @@ public class MainViewModel extends ViewModel {
     private final MediatorLiveData<Boolean> shareButtonEnabledData = new MediatorLiveData<>();
 
     public MainViewModel() {
-        previewTextData.addSource(previewMusicInfoData, (s) -> updatePreviewText());
+        previewTextData.addSource(originalPlainDataData, (s) -> updatePreviewText());
+        previewTextData.addSource(previewMusicArtistData, (s) -> updatePreviewText());
         previewTextData.addSource(previewSuffixData, (s) -> updatePreviewText());
         previewTextData.addSource(isPreviewTextRawData, (b) -> updatePreviewText());
         clearTextButtonEnabledData.addSource(previewMusicInfoData, this::updateClearTextButtonEnabled);
@@ -69,6 +72,11 @@ public class MainViewModel extends ViewModel {
     @NonNull
     public MutableLiveData<String> previewSuffix() {
         return previewSuffixData;
+    }
+
+    @NonNull
+    public MutableLiveData<String> previewArtist() {
+        return previewMusicArtistData;
     }
 
     @NonNull
@@ -131,27 +139,16 @@ public class MainViewModel extends ViewModel {
         previewImageUriData.postValue(null);
     }
 
-    public void handleIntent(@NonNull Intent intent) {
-        String action = intent.getAction();
-        String type = intent.getType();
-        Log.d(MainActivity.class.getSimpleName(), "handleIntent() action=" + action + ", type=" + type);
-
-        if (!Intent.ACTION_SEND.equals(action)) {
-            return;
-        }
-        if (type == null) {
-            return;
-        }
-
-        if ("text/plain".equals(type)) {
-            Bundle extras = intent.getExtras();
-            parseText(extras);
-        } else if (type.startsWith("image/")) {
-            previewImageUriData.postValue(intent.getParcelableExtra(Intent.EXTRA_STREAM));
-        }
+    public void handlePlainText(Bundle extras) {
+        previewMusicArtistData.postValue("");
+        originalPlainDataData.postValue(extras);
     }
 
-    public void shareText() {
+    public void handleImage(Uri uri) {
+        previewImageUriData.postValue(uri);
+    }
+
+    public void shareContent() {
         String text = previewTextData.getValue();
         Uri uri = previewImageUriData.getValue();
         if (text == null && uri == null) return;
@@ -166,33 +163,21 @@ public class MainViewModel extends ViewModel {
         shareEventData.postValue(bundle);
     }
 
-    private void parseText(@NonNull Bundle bundle) {
-        Parser[] parsers = {new YouTubeMusicV1(), new YouTubeMusicV2(), new Other()};
-        for (Parser parser : parsers) {
-            if (parser.check(bundle)) {
-                Music music = parser.parse(bundle);
-                Log.d(MainViewModel.class.getSimpleName(), music.toString());
-                previewMusicInfoData.postValue(combineMusic(music));
-                break;
-            }
-        }
-        previewMusicRawData.postValue(combineMusic(new Other().parse(bundle)));
-    }
-
     @NonNull
     private String combineMusic(@NonNull Music music) {
         return combineText(combineText(music.title, music.artist, " / "), music.url, "\n");
     }
 
-    private String combineText(@Nullable String one, @Nullable String another, @NonNull String delimiter) {
-        if (!TextUtils.isEmpty(one) && !TextUtils.isEmpty(another))
-            return one + delimiter + another;
-        return one + another;
-    }
-
     private void updatePreviewText() {
+        Bundle extra = originalPlainDataData.getValue();
+        if (extra == null) {
+            previewTextData.postValue("");
+            return;
+        }
+        String artist = previewMusicArtistData.getValue();
+        extra.putString(YouTubeMusic.EXTRA_ARTIST, artist);
         boolean isRaw = Optional.ofNullable(isPreviewTextRawData.getValue()).orElse(false);
-        String musicInfo = Optional.ofNullable(((isRaw) ? previewMusicRawData.getValue() : previewMusicInfoData.getValue())).orElse("");
+        String musicInfo = obtainMusicInfo(extra, isRaw);
         String suffix = Optional.ofNullable(previewSuffixData.getValue()).orElse("");
         Log.d(MainViewModel.class.getSimpleName(), "updatePreviewText() musicInfo=" + musicInfo + ", suffix=" + suffix);
         String spacer = "";
@@ -200,6 +185,20 @@ public class MainViewModel extends ViewModel {
             spacer = "\n";
         }
         previewTextData.postValue(musicInfo + spacer + suffix);
+    }
+
+    private String obtainMusicInfo(Bundle extras, boolean isRaw) {
+        if (!isRaw) {
+            Parser[] parsers = {new YouTubeMusic(), new Other()};
+            for (Parser parser : parsers) {
+                if (parser.check(extras)) {
+                    Music music = parser.parse(extras);
+                    Log.d(MainViewModel.class.getSimpleName(), music.toString());
+                    return combineMusic(music);
+                }
+            }
+        }
+        return combineMusic(new Other().parse(extras));
     }
 
     private void updateClearTextButtonEnabled(@Nullable String musicInfo) {
@@ -215,5 +214,11 @@ public class MainViewModel extends ViewModel {
         Uri imageUri = previewImageUriData.getValue();
         boolean canShare = !TextUtils.isEmpty(musicInfo) || (imageUri != null);
         shareButtonEnabledData.postValue(canShare);
+    }
+
+    private String combineText(@Nullable String one, @Nullable String another, @NonNull String delimiter) {
+        if (!TextUtils.isEmpty(one) && !TextUtils.isEmpty(another))
+            return one + delimiter + another;
+        return one + another;
     }
 }

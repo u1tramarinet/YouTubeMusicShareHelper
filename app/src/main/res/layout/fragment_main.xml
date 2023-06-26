@@ -25,7 +25,7 @@
             android:layout_marginBottom="30dp"
             android:elevation="@dimen/cardview_default_elevation"
             android:orientation="vertical"
-            app:layout_constraintBottom_toTopOf="@id/suffix_editing"
+            app:layout_constraintBottom_toTopOf="@id/suffix_input"
             app:layout_constraintTop_toTopOf="parent">
 
             <TextView
@@ -71,40 +71,49 @@
 
         </LinearLayout>
 
+        <EditText
+            android:id="@+id/suffix_input"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:importantForAutofill="no"
+            android:inputType="text"
+            android:text="@={viewModel.previewSuffix()}"
+            app:layout_constraintBottom_toTopOf="@id/artist_input"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:ignore="LabelFor" />
+
         <TextView
             android:id="@+id/suffix_input_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="30dp"
             android:text="@string/suffix"
-            app:layout_constraintBaseline_toBaselineOf="@id/suffix_editing"
-            app:layout_constraintStart_toStartOf="parent" />
-
-        <ToggleButton
-            android:id="@+id/suffix_editing"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
-            android:layout_marginEnd="30dp"
-            android:checked="@={viewModel.suffixInputEnabled()}"
-            android:onCheckedChanged="@{(button, checked) -> viewModel.updateSuffixEditing(checked)}"
-            android:textOff="@string/registered"
-            android:textOn="@string/inputting"
-            app:layout_constraintBottom_toTopOf="@id/suffix_input"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/suffix_input_title" />
+            android:textSize="11sp"
+            app:layout_constraintStart_toStartOf="@id/suffix_input"
+            app:layout_constraintTop_toBottomOf="@id/suffix_input" />
 
         <EditText
-            android:id="@+id/suffix_input"
-            android:layout_width="match_parent"
+            android:id="@+id/artist_input"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginBottom="20dp"
-            android:enabled="@{viewModel.suffixInputEnabled()}"
             android:importantForAutofill="no"
             android:inputType="text"
-            android:text="@={viewModel.previewSuffix()}"
+            android:text="@={viewModel.previewArtist()}"
             app:layout_constraintBottom_toTopOf="@id/raw"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             tools:ignore="LabelFor" />
+
+        <TextView
+            android:id="@+id/artist_input_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/artist"
+            android:textSize="11sp"
+            app:layout_constraintStart_toStartOf="@id/artist_input"
+            app:layout_constraintTop_toBottomOf="@id/artist_input" />
 
         <androidx.appcompat.widget.SwitchCompat
             android:id="@+id/raw"
@@ -112,10 +121,9 @@
             android:layout_height="wrap_content"
             android:checked="@={viewModel.isPreviewTextRaw()}"
             android:onCheckedChanged="@{(button, checked) -> viewModel.updateIsPreviewTextRaw(checked)}"
-            android:text="@string/raw"
+            android:text="@string/text_raw"
             app:layout_constraintBottom_toTopOf="@id/clear_text"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintEnd_toEndOf="@id/clear_text" />
 
         <Button
             android:id="@+id/clear_text"
@@ -151,7 +159,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:enabled="@{viewModel.shareButtonEnabled()}"
-            android:onClick="@{(v) -> viewModel.shareText()}"
+            android:onClick="@{(v) -> viewModel.shareContent()}"
             android:text="@string/share"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

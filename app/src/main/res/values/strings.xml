@@ -4,8 +4,9 @@
     <string name="text">テキスト</string>
     <string name="image">画像</string>
     <string name="suffix">接尾辞</string>
+    <string name="artist">アーティスト名</string>
     <string name="inputting">入力中</string>
     <string name="registered">編集する</string>
     <string name="key_suffix">suffix</string>
-    <string name="raw">無加工</string>
+    <string name="text_raw">テキスト無加工</string>
 </resources>
