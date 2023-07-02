@@ -6,6 +6,8 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import com.u1tramarinet.youtubemusicsharehelper.parser.result.Music;
+
 import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -20,7 +22,7 @@ public class YouTubeMusic implements Parser {
     @Override
     public boolean check(@NonNull Bundle bundle) {
         String subject = bundle.getString(Intent.EXTRA_SUBJECT, "");
-        return Arrays.stream(REGEXES).anyMatch(regex -> obtainMatcher(subject, regex.text).matches());
+        return Arrays.stream(REGEXES).anyMatch(regex -> obtainMatcher(subject, regex).matches());
     }
 
     @NonNull
@@ -33,9 +35,9 @@ public class YouTubeMusic implements Parser {
         Log.d(YouTubeMusic.class.getSimpleName(), "bundle's text=" + text);
         String title = subject;
         for (YouTubeMusicRegex regex : REGEXES) {
-            Matcher matcher = obtainMatcher(subject, regex.text);
+            Matcher matcher = obtainMatcher(subject, regex);
             if (matcher.matches()) {
-                title = obtainTitle(matcher, regex.titleGroupIndex);
+                title = obtainTitle(matcher, regex);
                 break;
             }
         }
@@ -43,16 +45,16 @@ public class YouTubeMusic implements Parser {
     }
 
     @NonNull
-    private String obtainTitle(@NonNull Matcher matcher, int titleGroupIndex) {
-        if (matcher.groupCount() < titleGroupIndex + 1) {
+    private String obtainTitle(@NonNull Matcher matcher, YouTubeMusicRegex regex) {
+        if (matcher.groupCount() < regex.titleGroupIndex + 1) {
             return "";
         }
-        String title = matcher.group(titleGroupIndex);
+        String title = matcher.group(regex.titleGroupIndex);
         return (title != null) ? title : "";
     }
 
-    private Matcher obtainMatcher(@NonNull String input, String regex) {
-        Pattern pattern = Pattern.compile(regex);
+    private Matcher obtainMatcher(@NonNull String input, YouTubeMusicRegex regex) {
+        Pattern pattern = Pattern.compile(regex.text);
         return pattern.matcher(input);
     }
 

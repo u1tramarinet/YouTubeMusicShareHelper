@@ -7,16 +7,17 @@
 
         <variable
             name="viewModel"
-            type="com.u1tramarinet.youtubemusicsharehelper.MainViewModel" />
+            type="com.u1tramarinet.youtubemusicsharehelper.screen.main.MainViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/background"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:padding="20dp"
-        tools:context=".MainFragment">
+        tools:context=".screen.main.MainFragment">
 
         <LinearLayout
             android:id="@+id/preview"
@@ -39,7 +40,6 @@
                 android:id="@+id/preview_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="?attr/colorSurfaceDark"
                 android:text="@{viewModel.previewText()}"
                 android:textSize="20sp"
                 tools:text="tweet" />
@@ -56,8 +56,7 @@
                 android:id="@+id/preview_image_background"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="1"
-                android:background="?attr/colorSurfaceDark">
+                android:layout_weight="1">
 
                 <ImageView
                     android:id="@+id/preview_image"
@@ -71,49 +70,55 @@
 
         </LinearLayout>
 
-        <EditText
+        <TextView
             android:id="@+id/suffix_input"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="20dp"
-            android:importantForAutofill="no"
-            android:inputType="text"
-            android:text="@={viewModel.previewSuffix()}"
+            android:layout_marginBottom="40dp"
+            android:text="@{viewModel.suffixText()}"
+            android:textSize="20sp"
             app:layout_constraintBottom_toTopOf="@id/artist_input"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            tools:ignore="LabelFor" />
+            app:layout_constraintStart_toStartOf="parent" />
 
         <TextView
             android:id="@+id/suffix_input_title"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/suffix"
             android:textSize="11sp"
             app:layout_constraintStart_toStartOf="@id/suffix_input"
             app:layout_constraintTop_toBottomOf="@id/suffix_input" />
 
-        <EditText
+        <TextView
             android:id="@+id/artist_input"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginBottom="20dp"
-            android:importantForAutofill="no"
-            android:inputType="text"
-            android:text="@={viewModel.previewArtist()}"
+            android:text="@{viewModel.musicArtistText()}"
+            android:textSize="20sp"
             app:layout_constraintBottom_toTopOf="@id/raw"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            tools:ignore="LabelFor" />
+            app:layout_constraintStart_toStartOf="parent" />
 
         <TextView
             android:id="@+id/artist_input_title"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/artist"
             android:textSize="11sp"
             app:layout_constraintStart_toStartOf="@id/artist_input"
             app:layout_constraintTop_toBottomOf="@id/artist_input" />
+
+        <TextView
+            android:id="@+id/rawTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/text_raw"
+            android:textSize="11sp"
+            app:layout_constraintBottom_toBottomOf="@id/raw"
+            app:layout_constraintEnd_toStartOf="@id/raw"
+            app:layout_constraintTop_toTopOf="@id/raw" />
 
         <androidx.appcompat.widget.SwitchCompat
             android:id="@+id/raw"
@@ -121,7 +126,6 @@
             android:layout_height="wrap_content"
             android:checked="@={viewModel.isPreviewTextRaw()}"
             android:onCheckedChanged="@{(button, checked) -> viewModel.updateIsPreviewTextRaw(checked)}"
-            android:text="@string/text_raw"
             app:layout_constraintBottom_toTopOf="@id/clear_text"
             app:layout_constraintEnd_toEndOf="@id/clear_text" />
 

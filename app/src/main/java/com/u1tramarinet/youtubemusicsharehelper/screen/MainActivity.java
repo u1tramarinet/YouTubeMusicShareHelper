@@ -1,4 +1,4 @@
-package com.u1tramarinet.youtubemusicsharehelper;
+package com.u1tramarinet.youtubemusicsharehelper.screen;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -9,6 +9,9 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.u1tramarinet.youtubemusicsharehelper.screen.main.MainViewModel;
+import com.u1tramarinet.youtubemusicsharehelper.R;
+
 public class MainActivity extends AppCompatActivity {
 
     private MainViewModel viewModel;
@@ -18,12 +21,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         viewModel = new ViewModelProvider(this).get(MainViewModel.class);
+        viewModel.suffixText().observe(this, this::saveSuffix);
         viewModel.shareEvent().observe(this, this::shareContent);
-        // TODO: 編集完了ボタンを復活させるか、別の契機で保存させることを検討せよ
-        viewModel.suffixInputEnabled().observe(this, enabled -> {
-            if (!enabled) saveSuffix();
-        });
-        // TODO: アーティスト入力欄についても同様の検討をせよ
         handleIntent(getIntent());
         restoreSuffix();
     }
@@ -58,11 +57,10 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    private void saveSuffix() {
-        String suffix = viewModel.previewSuffix().getValue();
+    private void saveSuffix(String newValue) {
         SharedPreferences preferences = getSharedPreferences();
         SharedPreferences.Editor editor = preferences.edit();
-        editor.putString(getString(R.string.key_suffix), suffix);
+        editor.putString(getString(R.string.key_suffix), newValue);
         editor.apply();
     }
 

@@ -7,7 +7,28 @@
 
     <fragment
         android:id="@+id/mainFragment"
-        android:name="com.u1tramarinet.youtubemusicsharehelper.MainFragment"
+        android:name="com.u1tramarinet.youtubemusicsharehelper.screen.main.MainFragment"
         android:label="fragment_main"
-        tools:layout="@layout/fragment_main" />
+        tools:layout="@layout/fragment_main">
+        <action
+            android:id="@+id/action_mainFragment_to_inputFragment"
+            app:destination="@id/inputFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/inputFragment"
+        android:name="com.u1tramarinet.youtubemusicsharehelper.screen.input.InputFragment"
+        android:label="InputFragment">
+        <argument
+            android:name="contentKey"
+            android:defaultValue=""
+            app:argType="string" />
+        <argument
+            android:name="contentTitle"
+            android:defaultValue=""
+            app:argType="string" />
+        <argument
+            android:name="initialValue"
+            android:defaultValue=""
+            app:argType="string" />
+    </fragment>
 </navigation>
