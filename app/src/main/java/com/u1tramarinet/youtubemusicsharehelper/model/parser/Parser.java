@@ -1,10 +1,10 @@
-package com.u1tramarinet.youtubemusicsharehelper.parser;
+package com.u1tramarinet.youtubemusicsharehelper.model.parser;
 
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 
-import com.u1tramarinet.youtubemusicsharehelper.parser.result.Text;
+import com.u1tramarinet.youtubemusicsharehelper.model.parser.result.Text;
 
 public interface Parser {
 

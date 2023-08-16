@@ -7,7 +7,7 @@ import androidx.lifecycle.ViewModelProvider;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
+import android.view.Menu;
 
 import com.u1tramarinet.youtubemusicsharehelper.screen.main.MainViewModel;
 import com.u1tramarinet.youtubemusicsharehelper.R;
@@ -28,6 +28,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         handleIntent(intent);
@@ -36,7 +41,6 @@ public class MainActivity extends AppCompatActivity {
     private void handleIntent(Intent intent) {
         String action = intent.getAction();
         String type = intent.getType();
-        Log.d(MainActivity.class.getSimpleName(), "handleIntent() action=" + action + ", type=" + type);
 
         if (!Intent.ACTION_SEND.equals(action) || type == null) {
             return;

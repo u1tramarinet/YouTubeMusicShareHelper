@@ -1,12 +1,16 @@
 <resources>
-    <string name="app_name">YouTubeMusicShareHelper</string>
+    <string name="app_name">YouTube Music 共有ヘルパー</string>
     <string name="share">共有</string>
+    <string name="share_x">%sを共有</string>
+    <string name="and">と</string>
     <string name="text">テキスト</string>
+    <string name="delete_text">テキストを削除</string>
     <string name="image">画像</string>
-    <string name="suffix">接尾辞</string>
+    <string name="delete_image">画像を削除</string>
+    <string name="suffix">定型文</string>
     <string name="artist">アーティスト名</string>
     <string name="inputting">入力中</string>
     <string name="registered">編集する</string>
     <string name="key_suffix">suffix</string>
-    <string name="text_raw">テキスト無加工</string>
+    <string name="text_raw">無加工にする</string>
 </resources>

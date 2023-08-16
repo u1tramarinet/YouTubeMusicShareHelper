@@ -1,4 +1,4 @@
-package com.u1tramarinet.youtubemusicsharehelper.parser;
+package com.u1tramarinet.youtubemusicsharehelper.model.parser;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -6,7 +6,7 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
-import com.u1tramarinet.youtubemusicsharehelper.parser.result.Music;
+import com.u1tramarinet.youtubemusicsharehelper.model.parser.result.Music;
 
 import java.util.Arrays;
 import java.util.regex.Matcher;

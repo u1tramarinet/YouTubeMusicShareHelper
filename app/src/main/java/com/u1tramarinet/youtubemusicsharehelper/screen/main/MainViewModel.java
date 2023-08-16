@@ -12,16 +12,13 @@ import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.u1tramarinet.youtubemusicsharehelper.parser.result.Music;
-import com.u1tramarinet.youtubemusicsharehelper.parser.Other;
-import com.u1tramarinet.youtubemusicsharehelper.parser.Parser;
-import com.u1tramarinet.youtubemusicsharehelper.parser.YouTubeMusic;
-import com.u1tramarinet.youtubemusicsharehelper.parser.result.Text;
-import com.u1tramarinet.youtubemusicsharehelper.util.TextUtil;
+import com.u1tramarinet.youtubemusicsharehelper.model.MainModel;
 
 import java.util.Optional;
 
 public class MainViewModel extends ViewModel {
+    @NonNull
+    private final MainModel model = new MainModel();
     @NonNull
     private final MutableLiveData<Bundle> plainTextBundleData = new MutableLiveData<>();
 
@@ -47,10 +44,13 @@ public class MainViewModel extends ViewModel {
     private final MediatorLiveData<Boolean> clearImageButtonEnabledData = new MediatorLiveData<>();
 
     @NonNull
-    private final MediatorLiveData<Boolean> shareButtonEnabledData = new MediatorLiveData<>();
+    private final MediatorLiveData<ShareEnabledState> shareButtonEnabledStateData = new MediatorLiveData<>();
 
     @NonNull
     private final MutableLiveData<Bundle> shareEventData = new MutableLiveData<>();
+
+    @NonNull
+    private final MutableLiveData<EventKey> eventKeyData = new MutableLiveData<>();
 
     public MainViewModel() {
         textData.addSource(plainTextBundleData, (s) -> updatePreviewText());
@@ -59,8 +59,8 @@ public class MainViewModel extends ViewModel {
         textData.addSource(isPreviewTextRawData, (b) -> updatePreviewText());
         clearTextButtonEnabledData.addSource(textData, this::updateClearTextButtonEnabled);
         clearImageButtonEnabledData.addSource(imageUriData, this::updateClearImageButtonEnabled);
-        shareButtonEnabledData.addSource(textData, (s) -> updateShareButtonEnabled());
-        shareButtonEnabledData.addSource(imageUriData, (uri) -> updateShareButtonEnabled());
+        shareButtonEnabledStateData.addSource(textData, (s) -> updateShareButtonEnabled());
+        shareButtonEnabledStateData.addSource(imageUriData, (uri) -> updateShareButtonEnabled());
     }
 
     @NonNull
@@ -69,7 +69,7 @@ public class MainViewModel extends ViewModel {
     }
 
     @NonNull
-    public LiveData<String> musicArtistText() {
+    public LiveData<String> artistText() {
         return musicArtistTextData;
     }
 
@@ -99,13 +99,18 @@ public class MainViewModel extends ViewModel {
     }
 
     @NonNull
-    public LiveData<Boolean> shareButtonEnabled() {
-        return shareButtonEnabledData;
+    public LiveData<ShareEnabledState> shareButtonEnabledState() {
+        return shareButtonEnabledStateData;
     }
 
     @NonNull
     public LiveData<Bundle> shareEvent() {
         return shareEventData;
+    }
+
+    @NonNull
+    public LiveData<EventKey> eventKey() {
+        return eventKeyData;
     }
 
     public void updateIsPreviewTextRaw(boolean isRaw) {
@@ -152,6 +157,10 @@ public class MainViewModel extends ViewModel {
         shareEventData.postValue(bundle);
     }
 
+    public void navigate(@NonNull EventKey eventKey) {
+        eventKeyData.postValue(eventKey);
+    }
+
     private void updatePreviewText() {
         Bundle extra = plainTextBundleData.getValue();
         if (extra == null) {
@@ -159,34 +168,15 @@ public class MainViewModel extends ViewModel {
             return;
         }
         String artist = musicArtistTextData.getValue();
-        extra.putString(YouTubeMusic.EXTRA_ARTIST, artist);
+        extra.putString(MainModel.EXTRA_ARTIST, artist);
         boolean isRaw = Optional.ofNullable(isPreviewTextRawData.getValue()).orElse(false);
-        String musicInfo = obtainText(extra, isRaw);
+        String musicInfo = model.obtainText(extra, isRaw);
         String suffix = Optional.ofNullable(textSuffixData.getValue()).orElse("");
         String spacer = "";
         if (!musicInfo.isEmpty() && !suffix.isEmpty()) {
             spacer = "\n";
         }
         textData.postValue(musicInfo + spacer + suffix);
-    }
-
-    private String obtainText(Bundle extras, boolean isRaw) {
-        if (!isRaw) {
-            Parser[] parsers = {new YouTubeMusic(), new Other()};
-            for (Parser parser : parsers) {
-                if (parser.check(extras)) {
-                    Text text = parser.parse(extras);
-                    String value = text.value;
-                    if (text instanceof Music) {
-                        Music music = (Music) text;
-                        value = TextUtil.combineTextsIfNeed(music.title, music.artist, Music.DEFAULT_DIVIDER);
-                    }
-                    return TextUtil.combineTextsIfNeed(value, text.url, "\n");
-                }
-            }
-        }
-        Text text = new Other().parse(extras);
-        return TextUtil.combineTextsIfNeed(text.value, text.url, "\n");
     }
 
     private void updateClearTextButtonEnabled(@Nullable String text) {
@@ -200,7 +190,7 @@ public class MainViewModel extends ViewModel {
     private void updateShareButtonEnabled() {
         String text = textData.getValue();
         Uri imageUri = imageUriData.getValue();
-        boolean canShare = !TextUtils.isEmpty(text) || (imageUri != null);
-        shareButtonEnabledData.postValue(canShare);
+        ShareEnabledState canShare = ShareEnabledState.getState(!TextUtils.isEmpty(text), (imageUri != null));
+        shareButtonEnabledStateData.postValue(canShare);
     }
 }

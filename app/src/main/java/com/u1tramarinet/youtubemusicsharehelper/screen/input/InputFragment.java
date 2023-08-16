@@ -4,6 +4,8 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.view.WindowCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
@@ -19,6 +21,7 @@ import com.u1tramarinet.youtubemusicsharehelper.R;
 import com.u1tramarinet.youtubemusicsharehelper.databinding.FragmentInputBinding;
 
 public class InputFragment extends Fragment {
+    private FragmentInputBinding binding;
     private InputViewModel viewModel;
     private String contentKey;
 
@@ -29,25 +32,40 @@ public class InputFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         viewModel = new ViewModelProvider(this).get(InputViewModel.class);
+        viewModel.eventKey().observe(this, this::navigate);
     }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        FragmentInputBinding binding = DataBindingUtil.inflate(inflater, R.layout.fragment_input, container, false);
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_input, container, false);
         binding.setLifecycleOwner(getViewLifecycleOwner());
         binding.setViewModel(viewModel);
-        binding.okButton.setOnClickListener(v -> {
-            restoreConfirmedInput();
-            findNavController().popBackStack();
-        });
-        binding.cancelButton.setOnClickListener(v -> findNavController().popBackStack());
         Bundle arguments = getArguments();
-        contentKey = (arguments != null) ? InputFragmentArgs.fromBundle(arguments).getContentKey() : "";
-        String title = (arguments != null) ? InputFragmentArgs.fromBundle(arguments).getContentTitle() : "";
-        String initialValue = (arguments != null) ? InputFragmentArgs.fromBundle(arguments).getInitialValue() : "";
+        contentKey = "";
+        String title = "";
+        String initialValue = "";
+        if (arguments != null) {
+            InputFragmentArgs args = InputFragmentArgs.fromBundle(arguments);
+            contentKey = args.getContentKey();
+            title = args.getContentTitle();
+            initialValue = args.getInitialValue();
+        }
+
         viewModel.initialize(title, initialValue);
         return binding.getRoot();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        focusAndShowIme(binding.input);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        clearFocusAndHideIme(binding.input);
     }
 
     private void restoreConfirmedInput() {
@@ -59,5 +77,22 @@ public class InputFragment extends Fragment {
 
     private NavController findNavController() {
         return Navigation.findNavController(requireActivity(), R.id.nav_host_fragment);
+    }
+
+    private void focusAndShowIme(View view) {
+        view.requestFocus();
+        WindowCompat.getInsetsController(requireActivity().getWindow(), view).show(WindowInsetsCompat.Type.ime());
+    }
+
+    private void clearFocusAndHideIme(View view) {
+        WindowCompat.getInsetsController(requireActivity().getWindow(), view).hide(WindowInsetsCompat.Type.ime());
+        view.clearFocus();
+    }
+
+    private void navigate(@NonNull EventKey eventKey) {
+        if (eventKey == EventKey.Ok) {
+            restoreConfirmedInput();
+        }
+        findNavController().popBackStack();
     }
 }

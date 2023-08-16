@@ -4,6 +4,8 @@
     <data>
 
         <import type="android.text.TextUtils" />
+        <import type="com.u1tramarinet.youtubemusicsharehelper.screen.main.ShareEnabledState" />
+        <import type="com.u1tramarinet.youtubemusicsharehelper.screen.main.EventKey" />
 
         <variable
             name="viewModel"
@@ -16,153 +18,175 @@
         android:id="@+id/background"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="20dp"
+        android:padding="16dp"
         tools:context=".screen.main.MainFragment">
 
-        <LinearLayout
-            android:id="@+id/preview"
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/card_text"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_marginBottom="30dp"
-            android:elevation="@dimen/cardview_default_elevation"
-            android:orientation="vertical"
-            app:layout_constraintBottom_toTopOf="@id/suffix_input"
+            android:layout_height="wrap_content"
             app:layout_constraintTop_toTopOf="parent">
 
-            <TextView
-                android:id="@+id/preview_text_title"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/text"
-                android:textSize="12sp" />
+                android:orientation="vertical"
+                android:padding="16dp">
 
-            <TextView
-                android:id="@+id/preview_text"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@{viewModel.previewText()}"
-                android:textSize="20sp"
-                tools:text="tweet" />
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/preview_text_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:text="@string/text"
+                    android:textAppearance="?attr/textAppearanceTitleMedium"
+                    android:textColor="?android:attr/textColorPrimary" />
 
-            <TextView
-                android:id="@+id/preview_image_title"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:text="@string/image"
-                android:textSize="12sp" />
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/preview_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@{viewModel.previewText()}"
+                    android:textAppearance="?attr/textAppearanceBodyMedium"
+                    android:textColor="?android:attr/textColorSecondary"
+                    tools:text="tweet" />
+            </LinearLayout>
 
-            <FrameLayout
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/card_image"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="20dp"
+            app:layout_constraintBottom_toTopOf="@id/suffix_input_outline"
+            app:layout_constraintTop_toBottomOf="@id/card_text">
+
+            <LinearLayout
                 android:id="@+id/preview_image_background"
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1">
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
 
-                <ImageView
-                    android:id="@+id/preview_image"
-                    android:layout_width="wrap_content"
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/preview_image_title"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:contentDescription="@null"
-                    android:scaleType="center" />
+                    android:layout_marginBottom="8dp"
+                    android:text="@string/image"
+                    android:textAppearance="?attr/textAppearanceTitleMedium"
+                    android:textColor="?android:attr/textColorPrimary" />
 
-            </FrameLayout>
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1">
 
-        </LinearLayout>
+                    <ImageView
+                        android:id="@+id/preview_image"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center"
+                        android:contentDescription="@null" />
 
-        <TextView
-            android:id="@+id/suffix_input"
+                </FrameLayout>
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/suffix_input_outline"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="40dp"
-            android:text="@{viewModel.suffixText()}"
-            android:textSize="20sp"
-            app:layout_constraintBottom_toTopOf="@id/artist_input"
+            android:layout_marginBottom="10dp"
+            android:hint="@string/suffix"
+            app:layout_constraintBottom_toTopOf="@id/artist_input_outline"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintStart_toStartOf="parent">
 
-        <TextView
-            android:id="@+id/suffix_input_title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/suffix"
-            android:textSize="11sp"
-            app:layout_constraintStart_toStartOf="@id/suffix_input"
-            app:layout_constraintTop_toBottomOf="@id/suffix_input" />
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/suffix_input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@{viewModel.suffixText()}"
+                android:onClick="@{(v) -> viewModel.navigate(EventKey.Suffix)}"
+                android:textSize="20sp"
+                android:focusable="false"
+                android:cursorVisible="false"
+                tools:text="ああああ" />
+        </com.google.android.material.textfield.TextInputLayout>
 
-        <TextView
-            android:id="@+id/artist_input"
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/artist_input_outline"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginBottom="20dp"
-            android:text="@{viewModel.musicArtistText()}"
-            android:textSize="20sp"
+            android:hint="@string/artist"
             app:layout_constraintBottom_toTopOf="@id/raw"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintStart_toStartOf="parent">
 
-        <TextView
-            android:id="@+id/artist_input_title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/artist"
-            android:textSize="11sp"
-            app:layout_constraintStart_toStartOf="@id/artist_input"
-            app:layout_constraintTop_toBottomOf="@id/artist_input" />
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/artist_input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:focusable="false"
+                android:cursorVisible="false"
+                android:text="@{viewModel.artistText()}"
+                android:onClick="@{(v) -> viewModel.navigate(EventKey.Artist)}"
+                android:textSize="20sp"
+                tools:text="ああああ" />
+        </com.google.android.material.textfield.TextInputLayout>
 
-        <TextView
-            android:id="@+id/rawTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/text_raw"
-            android:textSize="11sp"
-            app:layout_constraintBottom_toBottomOf="@id/raw"
-            app:layout_constraintEnd_toStartOf="@id/raw"
-            app:layout_constraintTop_toTopOf="@id/raw" />
-
-        <androidx.appcompat.widget.SwitchCompat
+        <com.google.android.material.materialswitch.MaterialSwitch
             android:id="@+id/raw"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:checked="@={viewModel.isPreviewTextRaw()}"
             android:onCheckedChanged="@{(button, checked) -> viewModel.updateIsPreviewTextRaw(checked)}"
-            app:layout_constraintBottom_toTopOf="@id/clear_text"
-            app:layout_constraintEnd_toEndOf="@id/clear_text" />
+            android:paddingStart="10dp"
+            android:paddingEnd="0dp"
+            android:text="@string/text_raw"
+            app:layout_constraintBottom_toBottomOf="@id/clear_text"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/clear_text" />
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/clear_text"
+            style="@style/Widget.Material3.Button.TonalButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="20dp"
-            android:layout_marginBottom="10dp"
-            android:drawableLeft="@android:drawable/ic_menu_delete"
             android:enabled="@{viewModel.clearTextButtonEnabled()}"
             android:onClick="@{(v) -> viewModel.clearText()}"
-            android:text="@string/text"
-            app:layout_constraintBottom_toTopOf="@id/share"
-            app:layout_constraintEnd_toStartOf="@id/clear_image"
+            android:text="@string/delete_text"
+            app:icon="@android:drawable/ic_menu_delete"
+            app:layout_constraintBottom_toTopOf="@id/clear_image"
+            app:layout_constraintEnd_toStartOf="@id/raw"
             app:layout_constraintStart_toStartOf="parent"
             tools:ignore="RtlHardcoded" />
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/clear_image"
+            style="@style/Widget.Material3.Button.TonalButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
-            android:drawableLeft="@android:drawable/ic_menu_delete"
+            android:layout_marginBottom="20dp"
             android:enabled="@{viewModel.clearImageButtonEnabled()}"
             android:onClick="@{(v) -> viewModel.clearImage()}"
-            android:text="@string/image"
+            android:text="@string/delete_image"
+            app:icon="@android:drawable/ic_menu_delete"
             app:layout_constraintBottom_toTopOf="@id/share"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/clear_text"
+            app:layout_constraintEnd_toStartOf="@id/raw"
+            app:layout_constraintStart_toStartOf="parent"
             tools:ignore="RtlHardcoded" />
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/share"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:enabled="@{viewModel.shareButtonEnabled()}"
+            android:enabled="@{viewModel.shareButtonEnabledState() != ShareEnabledState.None}"
             android:onClick="@{(v) -> viewModel.shareContent()}"
             android:text="@string/share"
             app:layout_constraintBottom_toBottomOf="parent"

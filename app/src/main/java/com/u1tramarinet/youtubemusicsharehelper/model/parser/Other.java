@@ -1,11 +1,11 @@
-package com.u1tramarinet.youtubemusicsharehelper.parser;
+package com.u1tramarinet.youtubemusicsharehelper.model.parser;
 
 import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 
-import com.u1tramarinet.youtubemusicsharehelper.parser.result.Music;
+import com.u1tramarinet.youtubemusicsharehelper.model.parser.result.Music;
 
 public class Other implements Parser {
 

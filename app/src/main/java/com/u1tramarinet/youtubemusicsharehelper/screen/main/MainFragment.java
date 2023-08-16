@@ -2,13 +2,11 @@ package com.u1tramarinet.youtubemusicsharehelper.screen.main;
 
 import android.content.ContentResolver;
 import android.content.Context;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 
-import androidx.annotation.AttrRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
@@ -21,7 +19,6 @@ import androidx.palette.graphics.Palette;
 
 import android.os.Handler;
 import android.os.Looper;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,9 +33,6 @@ import java.lang.ref.WeakReference;
 import java.util.function.Consumer;
 
 public class MainFragment extends Fragment {
-    private static final String KEY_SUFFIX = "com.u1tramarinet.youtubemusicsharehelper.screen.main.SUFFIX";
-    private static final String KEY_ARTIST = "com.u1tramarinet.youtubemusicsharehelper.screen.main.ARTIST";
-
     private MainViewModel viewModel;
     private WeakReference<Context> contextRef;
     private FragmentMainBinding binding;
@@ -52,6 +46,8 @@ public class MainFragment extends Fragment {
         contextRef = new WeakReference<>(context);
         viewModel = new ViewModelProvider(requireActivity()).get(MainViewModel.class);
         viewModel.previewImageUri().observe(this, this::updateImage);
+        viewModel.shareButtonEnabledState().observe(this, this::updateTextOfShareButton);
+        viewModel.eventKey().observe(this, this::navigate);
     }
 
     @Override
@@ -60,40 +56,36 @@ public class MainFragment extends Fragment {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_main, container, false);
         binding.setLifecycleOwner(getViewLifecycleOwner());
         binding.setViewModel(viewModel);
-        binding.suffixInput.setOnClickListener(v -> {
-            MainFragmentDirections.ActionMainFragmentToInputFragment action = obtainActionToInputFragment(KEY_SUFFIX, getString(R.string.suffix), viewModel.suffixText().getValue());
-            findNavController().navigate(action);
-        });
-        binding.suffixInputTitle.setOnClickListener(v -> {
-            MainFragmentDirections.ActionMainFragmentToInputFragment action = obtainActionToInputFragment(KEY_SUFFIX, getString(R.string.suffix), viewModel.suffixText().getValue());
-            findNavController().navigate(action);
-        });
-        binding.artistInput.setOnClickListener(v -> {
-            MainFragmentDirections.ActionMainFragmentToInputFragment action = obtainActionToInputFragment(KEY_ARTIST, getString(R.string.artist), viewModel.musicArtistText().getValue());
-            findNavController().navigate(action);
-        });
-        binding.artistInputTitle.setOnClickListener(v -> {
-            MainFragmentDirections.ActionMainFragmentToInputFragment action = obtainActionToInputFragment(KEY_ARTIST, getString(R.string.artist), viewModel.musicArtistText().getValue());
-            findNavController().navigate(action);
-        });
         NavBackStackEntry navBackStackEntry = findNavController().getCurrentBackStackEntry();
         if (navBackStackEntry != null) {
-            navBackStackEntry.getSavedStateHandle().<String>getLiveData(KEY_SUFFIX).observe(getViewLifecycleOwner(), s -> viewModel.updateSuffix(s));
-            navBackStackEntry.getSavedStateHandle().<String>getLiveData(KEY_ARTIST).observe(getViewLifecycleOwner(), s -> viewModel.updateArtist(s));
+            navBackStackEntry.getSavedStateHandle().<String>getLiveData(EventKey.Suffix.getKey()).observe(getViewLifecycleOwner(), s -> viewModel.updateSuffix(s));
+            navBackStackEntry.getSavedStateHandle().<String>getLiveData(EventKey.Artist.getKey()).observe(getViewLifecycleOwner(), s -> viewModel.updateArtist(s));
         }
         return binding.getRoot();
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        updateImage(viewModel.previewImageUri().getValue());
+    }
+
+    private void updateTextOfShareButton(@NonNull ShareEnabledState shareEnabledState) {
+        binding.share.setText(getTextOfShareButton(shareEnabledState.text, shareEnabledState.image));
+    }
+
     private void updateImage(Uri uri) {
         final Bitmap image = (uri != null) ? createBitmapFromUri(uri) : null;
-        createColorPaletteFromImage(image, colorPalette -> updateImageAndColor(image, colorPalette));
+        binding.previewImage.setImageBitmap(image);
+        generateBackgroundColorFromImage(image, imageBackground -> binding.previewImageBackground.setBackgroundColor(imageBackground));
     }
 
     @Nullable
     private Bitmap createBitmapFromUri(@NonNull Uri imageUri) {
         InputStream stream;
+        String scheme = imageUri.getScheme();
 
-        if (imageUri.getScheme().equals(ContentResolver.SCHEME_CONTENT)) {
+        if (scheme != null && scheme.equals(ContentResolver.SCHEME_CONTENT)) {
             try {
                 stream = contextRef.get().getContentResolver().openInputStream(imageUri);
             } catch (FileNotFoundException e) {
@@ -116,74 +108,65 @@ public class MainFragment extends Fragment {
         return BitmapFactory.decodeStream(stream);
     }
 
-    private void createColorPaletteFromImage(@Nullable Bitmap image, @NonNull final Consumer<ColorPalette> onComplete) {
-        ColorPalette colorPalette = new ColorPalette();
-        colorPalette.titleTextColor = getDefaultColor(R.attr.colorOnBackground);
-        colorPalette.bodyTextColor = getDefaultColor(R.attr.colorOnSurfaceDark);
-        colorPalette.bodyBackgroundColor = getDefaultColor(R.attr.colorOnSurfaceDark);
-        colorPalette.backgroundColor = getDefaultColor(R.attr.colorPrimaryDark);
-        if (image != null) {
-            Palette.from(image).generate(palette -> {
-                if (palette != null) {
-                    Palette.Swatch primaryPalette = palette.getLightVibrantSwatch();
-                    Palette.Swatch secondaryPalette = palette.getDarkVibrantSwatch();
-                    if (primaryPalette != null) {
-                        colorPalette.bodyTextColor = primaryPalette.getBodyTextColor();
-                        colorPalette.bodyBackgroundColor = primaryPalette.getRgb();
-                    }
-                    if (secondaryPalette != null) {
-                        colorPalette.titleTextColor = secondaryPalette.getTitleTextColor();
-                        colorPalette.backgroundColor = secondaryPalette.getRgb();
-                    }
-                }
-                runOnMainThread(() -> onComplete.accept(colorPalette));
-            });
+    private void generateBackgroundColorFromImage(@Nullable Bitmap image, @NonNull final Consumer<Integer> onComplete) {
+        final int defaultImageBackground = android.R.color.transparent;
+        if (image == null) {
+            runOnMainThread(() -> onComplete.accept(defaultImageBackground));
+            return;
         }
-        runOnMainThread(() -> onComplete.accept(colorPalette));
+        Palette.from(image).generate(palette -> {
+            if (palette != null) {
+                Palette.Swatch primaryPalette = palette.getMutedSwatch();
+                if (primaryPalette != null) {
+                    final int imageBackground = primaryPalette.getRgb();
+                    runOnMainThread(() -> onComplete.accept(imageBackground));
+                    return;
+                }
+            }
+            runOnMainThread(() -> onComplete.accept(defaultImageBackground));
+        });
     }
 
-    private void updateImageAndColor(@Nullable Bitmap image, @NonNull ColorPalette colorPalette) {
-        binding.background.setBackgroundColor(colorPalette.backgroundColor);
-        binding.previewTextTitle.setTextColor(colorPalette.titleTextColor);
-        binding.previewText.setTextColor(colorPalette.bodyBackgroundColor);
-        binding.previewImageTitle.setTextColor(colorPalette.titleTextColor);
-        binding.previewImage.setImageBitmap(image);
-        binding.suffixInputTitle.setTextColor(colorPalette.titleTextColor);
-        binding.suffixInput.setTextColor(colorPalette.bodyBackgroundColor);
-        binding.artistInputTitle.setTextColor(colorPalette.titleTextColor);
-        binding.artistInput.setTextColor(colorPalette.bodyBackgroundColor);
-        binding.rawTitle.setTextColor(colorPalette.titleTextColor);
-    }
-
-    private int getDefaultColor(@AttrRes int attrRes) {
-        TypedValue outValue = new TypedValue();
-        Resources.Theme theme = contextRef.get().getTheme();
-        theme.resolveAttribute(attrRes, outValue, true);
-        return getResources().getColor(outValue.resourceId, theme);
-    }
-
-    private void runOnMainThread(@NonNull Runnable r) {
-        new Handler(Looper.getMainLooper()).post(r);
-    }
-
-    private MainFragmentDirections.ActionMainFragmentToInputFragment obtainActionToInputFragment(@NonNull String key, @NonNull String title, @Nullable String initialValue) {
+    private void navigate(@NonNull EventKey eventKey) {
+        String initialValue;
+        switch (eventKey) {
+            case Suffix:
+                initialValue = viewModel.suffixText().getValue();
+                break;
+            case Artist:
+                initialValue = viewModel.artistText().getValue();
+                break;
+            default:
+                return;
+        }
+        String title = getString(eventKey.titleRes);
         MainFragmentDirections.ActionMainFragmentToInputFragment action = MainFragmentDirections.actionMainFragmentToInputFragment();
-        action.setContentKey(key);
+        action.setContentKey(eventKey.getKey());
         action.setContentTitle(title);
         if (initialValue != null) {
             action.setInitialValue(initialValue);
         }
-        return action;
+        findNavController().navigate(action);
     }
 
     private NavController findNavController() {
         return Navigation.findNavController(requireActivity(), R.id.nav_host_fragment);
     }
 
-    private static class ColorPalette {
-        int titleTextColor;
-        int bodyTextColor;
-        int bodyBackgroundColor;
-        int backgroundColor;
+    private String getTextOfShareButton(boolean hasText, boolean hasImage) {
+        if (!hasText && !hasImage) {
+            return getString(R.string.share);
+        }
+        String target;
+        if (hasText && hasImage) {
+            target = getString(R.string.text) + getString(R.string.and) + getString(R.string.image);
+        } else {
+            target = getString((hasText) ? R.string.text : R.string.image);
+        }
+        return getString(R.string.share_x, target);
+    }
+
+    private void runOnMainThread(@NonNull Runnable r) {
+        new Handler(Looper.getMainLooper()).post(r);
     }
 }

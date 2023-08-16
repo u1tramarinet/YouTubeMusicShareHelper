@@ -1,4 +1,4 @@
-package com.u1tramarinet.youtubemusicsharehelper.parser.result;
+package com.u1tramarinet.youtubemusicsharehelper.model.parser.result;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
