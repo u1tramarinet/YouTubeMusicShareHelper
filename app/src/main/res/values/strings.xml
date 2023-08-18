@@ -13,4 +13,12 @@
     <string name="registered">編集する</string>
     <string name="key_suffix">suffix</string>
     <string name="text_raw">無加工にする</string>
+    <string name="dark_mode">ダークモード</string>
+    <string name="on">オン</string>
+    <string name="off">オフ</string>
+    <string name="use_battery_saver_setting">バッテリーセーバーによる設定を使う</string>
+    <string name="use_device_setting">端末の設定を使う</string>
+    <string name="action_light_mode">ライトモード</string>
+    <string name="action_dark_mode">@string/dark_mode</string>
+    <string name="action_auto_mode">オート</string>
 </resources>

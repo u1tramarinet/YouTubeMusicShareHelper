@@ -14,7 +14,7 @@ public enum ShareEnabledState {
         this.image = image;
     }
 
-    static ShareEnabledState getState(boolean text, boolean image) {
+    public static ShareEnabledState getState(boolean text, boolean image) {
         for (ShareEnabledState state : ShareEnabledState.values()) {
             if (state.text == text && state.image == image) {
                 return state;

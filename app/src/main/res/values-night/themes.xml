@@ -1,7 +1,8 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <style name="Theme.YouTubeMusicShareHelper" parent="Theme.Material3.DynamicColors.DayNight">
+    <style name="Theme.YouTubeMusicShareHelper" parent="Theme.Material3.Dark.NoActionBar">
         <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar">false</item>
         <item name="android:navigationBarColor">@android:color/transparent</item>
         <!-- Customize for material color design. -->
         <item name="elevationOverlayColor">@android:color/holo_red_dark</item>

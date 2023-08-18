@@ -9,27 +9,40 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.Menu;
 
-import com.u1tramarinet.youtubemusicsharehelper.screen.main.MainViewModel;
+import com.u1tramarinet.youtubemusicsharehelper.databinding.ActivityMainBinding;
 import com.u1tramarinet.youtubemusicsharehelper.R;
 
-public class MainActivity extends AppCompatActivity {
+import java.util.Arrays;
+
+public class MainActivity extends AppCompatActivity implements DarkModeDialogFragment.DarkModeDialogListener {
 
     private MainViewModel viewModel;
+    private ActivityMainBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+
+        binding.topAppBar.setOnMenuItemClickListener(item -> {
+            int clickedItemId = item.getItemId();
+            int[] targetItemIds = {R.id.action_light_mode, R.id.action_dark_mode, R.id.action_battery_auto_mode, R.id.action_system_auto_mode};
+            if (Arrays.stream(targetItemIds).anyMatch(itemId -> (itemId == clickedItemId))) {
+                showNightModeDialog();
+                return true;
+            }
+            return false;
+        });
+
         viewModel = new ViewModelProvider(this).get(MainViewModel.class);
         viewModel.suffixText().observe(this, this::saveSuffix);
         viewModel.shareEvent().observe(this, this::shareContent);
+        viewModel.darkMode().observe(this, this::setAppNightMode);
+        viewModel.updateDarkMode(getCurrentAppDarkMode());
+
         handleIntent(getIntent());
         restoreSuffix();
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        return super.onCreateOptionsMenu(menu);
     }
 
     @Override
@@ -74,6 +87,37 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private SharedPreferences getSharedPreferences() {
-        return this.getPreferences(MODE_PRIVATE);
+        return getPreferences(MODE_PRIVATE);
+    }
+
+    private void setAppNightMode(@NonNull DarkMode mode) {
+        if (getCurrentAppDarkMode() != mode) {
+            getDelegate().setLocalNightMode(mode.value);
+        }
+        Menu menu = binding.topAppBar.getMenu();
+        if (menu == null) {
+            return;
+        }
+        for (DarkMode m : DarkMode.values()) {
+            menu.findItem(m.actionResId).setVisible(m == mode);
+        }
+    }
+
+    @NonNull
+    private DarkMode getCurrentAppDarkMode() {
+        return DarkMode.findByValue(getDelegate().getLocalNightMode());
+    }
+
+    private void showNightModeDialog() {
+        DarkModeDialogFragment dialog = new DarkModeDialogFragment();
+        Bundle arguments = new Bundle();
+        arguments.putInt(DarkModeDialogFragment.KEY_INITIAL_CHOICE_VALUE, getCurrentAppDarkMode().value);
+        dialog.setArguments(arguments);
+        dialog.show(getSupportFragmentManager(), "darkMode");
+    }
+
+    @Override
+    public void switchDarkMode(@NonNull DarkMode mode) {
+        viewModel.updateDarkMode(mode);
     }
 }

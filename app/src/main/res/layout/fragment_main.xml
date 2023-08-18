@@ -4,12 +4,14 @@
     <data>
 
         <import type="android.text.TextUtils" />
+
         <import type="com.u1tramarinet.youtubemusicsharehelper.screen.main.ShareEnabledState" />
+
         <import type="com.u1tramarinet.youtubemusicsharehelper.screen.main.EventKey" />
 
         <variable
             name="viewModel"
-            type="com.u1tramarinet.youtubemusicsharehelper.screen.main.MainViewModel" />
+            type="com.u1tramarinet.youtubemusicsharehelper.screen.MainViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -110,11 +112,11 @@
                 android:id="@+id/suffix_input"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@{viewModel.suffixText()}"
-                android:onClick="@{(v) -> viewModel.navigate(EventKey.Suffix)}"
-                android:textSize="20sp"
-                android:focusable="false"
                 android:cursorVisible="false"
+                android:focusable="false"
+                android:onClick="@{(v) -> viewModel.navigate(EventKey.Suffix)}"
+                android:text="@{viewModel.suffixText()}"
+                android:textSize="20sp"
                 tools:text="ああああ" />
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -132,10 +134,10 @@
                 android:id="@+id/artist_input"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:focusable="false"
                 android:cursorVisible="false"
-                android:text="@{viewModel.artistText()}"
+                android:focusable="false"
                 android:onClick="@{(v) -> viewModel.navigate(EventKey.Artist)}"
+                android:text="@{viewModel.artistText()}"
                 android:textSize="20sp"
                 tools:text="ああああ" />
         </com.google.android.material.textfield.TextInputLayout>
@@ -145,6 +147,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:checked="@={viewModel.isPreviewTextRaw()}"
+            android:enabled="@{viewModel.clearTextButtonEnabled()}"
             android:onCheckedChanged="@{(button, checked) -> viewModel.updateIsPreviewTextRaw(checked)}"
             android:paddingStart="10dp"
             android:paddingEnd="0dp"

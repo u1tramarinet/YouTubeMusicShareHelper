@@ -1,4 +1,4 @@
-package com.u1tramarinet.youtubemusicsharehelper.screen.main;
+package com.u1tramarinet.youtubemusicsharehelper.screen;
 
 import android.content.Intent;
 import android.net.Uri;
@@ -13,6 +13,8 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.u1tramarinet.youtubemusicsharehelper.model.MainModel;
+import com.u1tramarinet.youtubemusicsharehelper.screen.main.EventKey;
+import com.u1tramarinet.youtubemusicsharehelper.screen.main.ShareEnabledState;
 
 import java.util.Optional;
 
@@ -51,6 +53,9 @@ public class MainViewModel extends ViewModel {
 
     @NonNull
     private final MutableLiveData<EventKey> eventKeyData = new MutableLiveData<>();
+
+    @NonNull
+    private final MutableLiveData<DarkMode> darkModeData = new MutableLiveData<>();
 
     public MainViewModel() {
         textData.addSource(plainTextBundleData, (s) -> updatePreviewText());
@@ -113,6 +118,11 @@ public class MainViewModel extends ViewModel {
         return eventKeyData;
     }
 
+    @NonNull
+    public LiveData<DarkMode> darkMode() {
+        return darkModeData;
+    }
+
     public void updateIsPreviewTextRaw(boolean isRaw) {
         isPreviewTextRawData.postValue(isRaw);
     }
@@ -161,6 +171,10 @@ public class MainViewModel extends ViewModel {
         eventKeyData.postValue(eventKey);
     }
 
+    public void updateDarkMode(@NonNull DarkMode mode) {
+        darkModeData.postValue(mode);
+    }
+
     private void updatePreviewText() {
         Bundle extra = plainTextBundleData.getValue();
         if (extra == null) {
@@ -190,7 +204,7 @@ public class MainViewModel extends ViewModel {
     private void updateShareButtonEnabled() {
         String text = textData.getValue();
         Uri imageUri = imageUriData.getValue();
-        ShareEnabledState canShare = ShareEnabledState.getState(!TextUtils.isEmpty(text), (imageUri != null));
-        shareButtonEnabledStateData.postValue(canShare);
+        ShareEnabledState enabledState = ShareEnabledState.getState(!TextUtils.isEmpty(text), (imageUri != null));
+        shareButtonEnabledStateData.postValue(enabledState);
     }
 }

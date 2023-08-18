@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/action_light_mode"
+        android:icon="@drawable/baseline_light_mode_24"
+        android:title="@string/action_light_mode"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/action_dark_mode"
+        android:icon="@drawable/baseline_dark_mode_24"
+        android:title="@string/action_dark_mode"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/action_battery_auto_mode"
+        android:icon="@drawable/baseline_auto_mode_24"
+        android:title="@string/action_auto_mode"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/action_system_auto_mode"
+        android:icon="@drawable/baseline_auto_mode_24"
+        android:title="@string/action_auto_mode"
+        app:showAsAction="ifRoom" />
+</menu>
