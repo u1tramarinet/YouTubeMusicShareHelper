@@ -15,10 +15,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DarkModeDialogFragment extends DialogFragment {
-    static final String KEY_INITIAL_CHOICE_VALUE = "default_choice";
+    private static final String KEY_INITIAL_CHOICE_VALUE = "default_choice";
 
     @Nullable
     private DarkModeDialogListener listener;
+
+    public static DarkModeDialogFragment newInstance(@NonNull DarkMode mode) {
+        DarkModeDialogFragment dialog = new DarkModeDialogFragment();
+        Bundle arguments = new Bundle();
+        arguments.putInt(DarkModeDialogFragment.KEY_INITIAL_CHOICE_VALUE, mode.value);
+        dialog.setArguments(arguments);
+        return dialog;
+    }
 
     @Override
     public void onAttach(@NonNull Context context) {

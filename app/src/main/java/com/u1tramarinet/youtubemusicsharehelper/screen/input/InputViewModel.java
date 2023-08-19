@@ -5,13 +5,16 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.u1tramarinet.youtubemusicsharehelper.util.event.SingleEventLiveData;
+import com.u1tramarinet.youtubemusicsharehelper.util.event.SingleEventMutableLiveData;
+
 public class InputViewModel extends ViewModel {
     @NonNull
     public final MutableLiveData<String> input = new MutableLiveData<>();
     @NonNull
     private final MutableLiveData<String> titleData = new MutableLiveData<>("");
 
-    private final MutableLiveData<EventKey> eventKeyData = new MutableLiveData<>();
+    private final SingleEventMutableLiveData<EventKey> eventKeyData = new SingleEventMutableLiveData<>();
 
     public void initialize(String title, String initialValue) {
         titleData.postValue(title);
@@ -28,7 +31,7 @@ public class InputViewModel extends ViewModel {
     }
 
     @NonNull
-    public LiveData<EventKey> eventKey() {
+    public SingleEventLiveData<EventKey> eventKey() {
         return eventKeyData;
     }
 }

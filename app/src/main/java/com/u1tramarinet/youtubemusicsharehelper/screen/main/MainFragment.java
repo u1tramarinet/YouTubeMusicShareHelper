@@ -12,13 +12,11 @@ import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.navigation.NavBackStackEntry;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
 import androidx.palette.graphics.Palette;
 
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,6 +24,7 @@ import android.view.ViewGroup;
 import com.u1tramarinet.youtubemusicsharehelper.R;
 import com.u1tramarinet.youtubemusicsharehelper.databinding.FragmentMainBinding;
 import com.u1tramarinet.youtubemusicsharehelper.screen.MainViewModel;
+import com.u1tramarinet.youtubemusicsharehelper.screen.input.InputModalBottomSheet;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -57,11 +56,6 @@ public class MainFragment extends Fragment {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_main, container, false);
         binding.setLifecycleOwner(getViewLifecycleOwner());
         binding.setViewModel(viewModel);
-        NavBackStackEntry navBackStackEntry = findNavController().getCurrentBackStackEntry();
-        if (navBackStackEntry != null) {
-            navBackStackEntry.getSavedStateHandle().<String>getLiveData(EventKey.Suffix.getKey()).observe(getViewLifecycleOwner(), s -> viewModel.updateSuffix(s));
-            navBackStackEntry.getSavedStateHandle().<String>getLiveData(EventKey.Artist.getKey()).observe(getViewLifecycleOwner(), s -> viewModel.updateArtist(s));
-        }
         return binding.getRoot();
     }
 
@@ -129,6 +123,7 @@ public class MainFragment extends Fragment {
     }
 
     private void navigate(@NonNull EventKey eventKey) {
+        Log.d(MainFragment.class.getSimpleName(), "navigate() key=" + eventKey.getKey());
         String initialValue;
         switch (eventKey) {
             case Suffix:
@@ -141,17 +136,9 @@ public class MainFragment extends Fragment {
                 return;
         }
         String title = getString(eventKey.titleRes);
-        MainFragmentDirections.ActionMainFragmentToInputFragment action = MainFragmentDirections.actionMainFragmentToInputFragment();
-        action.setContentKey(eventKey.getKey());
-        action.setContentTitle(title);
-        if (initialValue != null) {
-            action.setInitialValue(initialValue);
-        }
-        findNavController().navigate(action);
-    }
-
-    private NavController findNavController() {
-        return Navigation.findNavController(requireActivity(), R.id.nav_host_fragment);
+        InputModalBottomSheet inputModalBottomSheet = InputModalBottomSheet.newInstance(eventKey.getKey(), title, (initialValue != null) ? initialValue : "",
+                getChildFragmentManager(), this, (contentKey, value) -> viewModel.updateParameter(contentKey, value));
+        inputModalBottomSheet.show(getChildFragmentManager(), null);
     }
 
     private String getTextOfShareButton(boolean hasText, boolean hasImage) {

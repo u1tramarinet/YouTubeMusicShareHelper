@@ -1,6 +1,7 @@
 package com.u1tramarinet.youtubemusicsharehelper.screen.main;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.u1tramarinet.youtubemusicsharehelper.R;
 
@@ -19,5 +20,15 @@ public enum EventKey {
 
     public String getKey() {
         return KEY_SUFFIX + "." + this.key;
+    }
+
+    @Nullable
+    public static EventKey findByKey(String key) {
+        for (EventKey eventKey : EventKey.values()) {
+            if (eventKey.getKey().equals(key)) {
+                return eventKey;
+            }
+        }
+        return null;
     }
 }

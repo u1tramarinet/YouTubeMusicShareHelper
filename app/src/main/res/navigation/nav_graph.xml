@@ -16,19 +16,6 @@
     </fragment>
     <fragment
         android:id="@+id/inputFragment"
-        android:name="com.u1tramarinet.youtubemusicsharehelper.screen.input.InputFragment"
-        android:label="InputFragment">
-        <argument
-            android:name="contentKey"
-            android:defaultValue=""
-            app:argType="string" />
-        <argument
-            android:name="contentTitle"
-            android:defaultValue=""
-            app:argType="string" />
-        <argument
-            android:name="initialValue"
-            android:defaultValue=""
-            app:argType="string" />
-    </fragment>
+        android:name="com.u1tramarinet.youtubemusicsharehelper.screen.input.InputModalBottomSheet"
+        android:label="InputFragment"/>
 </navigation>

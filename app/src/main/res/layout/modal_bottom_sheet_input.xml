@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
 
@@ -10,13 +12,14 @@
         <import type="com.u1tramarinet.youtubemusicsharehelper.screen.input.EventKey" />
     </data>
 
-    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        style="?attr/bottomSheetStyle"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:padding="16dp"
-        tools:context=".screen.input.InputFragment">
+        app:behavior_hideable="false"
+        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
+        tools:context=".screen.input.InputModalBottomSheet">
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/input_outline"
@@ -35,6 +38,7 @@
                 android:layout_height="wrap_content"
                 android:importantForAutofill="no"
                 android:inputType="textImeMultiLine"
+                android:lines="2"
                 android:text="@={viewModel.input}" />
         </com.google.android.material.textfield.TextInputLayout>
 

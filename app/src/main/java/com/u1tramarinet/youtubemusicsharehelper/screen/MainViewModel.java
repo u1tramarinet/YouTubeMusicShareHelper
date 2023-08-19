@@ -15,6 +15,8 @@ import androidx.lifecycle.ViewModel;
 import com.u1tramarinet.youtubemusicsharehelper.model.MainModel;
 import com.u1tramarinet.youtubemusicsharehelper.screen.main.EventKey;
 import com.u1tramarinet.youtubemusicsharehelper.screen.main.ShareEnabledState;
+import com.u1tramarinet.youtubemusicsharehelper.util.event.SingleEventLiveData;
+import com.u1tramarinet.youtubemusicsharehelper.util.event.SingleEventMutableLiveData;
 
 import java.util.Optional;
 
@@ -52,7 +54,7 @@ public class MainViewModel extends ViewModel {
     private final MutableLiveData<Bundle> shareEventData = new MutableLiveData<>();
 
     @NonNull
-    private final MutableLiveData<EventKey> eventKeyData = new MutableLiveData<>();
+    private final SingleEventMutableLiveData<EventKey> eventKeyData = new SingleEventMutableLiveData<>();
 
     @NonNull
     private final MutableLiveData<DarkMode> darkModeData = new MutableLiveData<>();
@@ -114,7 +116,7 @@ public class MainViewModel extends ViewModel {
     }
 
     @NonNull
-    public LiveData<EventKey> eventKey() {
+    public SingleEventLiveData<EventKey> eventKey() {
         return eventKeyData;
     }
 
@@ -133,6 +135,21 @@ public class MainViewModel extends ViewModel {
 
     public void updateArtist(@NonNull String artist) {
         musicArtistTextData.postValue(artist);
+    }
+
+    public void updateParameter(@NonNull String key, @NonNull String value) {
+        EventKey eventKey = EventKey.findByKey(key);
+        if (eventKey == null) {
+            return;
+        }
+        switch (eventKey) {
+            case Suffix:
+                updateSuffix(value);
+                break;
+            case Artist:
+                updateArtist(value);
+                break;
+        }
     }
 
     public void clearText() {

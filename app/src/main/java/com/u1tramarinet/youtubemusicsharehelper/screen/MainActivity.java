@@ -15,7 +15,7 @@ import com.u1tramarinet.youtubemusicsharehelper.R;
 import java.util.Arrays;
 
 public class MainActivity extends AppCompatActivity implements DarkModeDialogFragment.DarkModeDialogListener {
-
+    private static final String KEY_SUFFIX = "suffix";
     private MainViewModel viewModel;
     private ActivityMainBinding binding;
 
@@ -77,13 +77,13 @@ public class MainActivity extends AppCompatActivity implements DarkModeDialogFra
     private void saveSuffix(String newValue) {
         SharedPreferences preferences = getSharedPreferences();
         SharedPreferences.Editor editor = preferences.edit();
-        editor.putString(getString(R.string.key_suffix), newValue);
+        editor.putString(KEY_SUFFIX, newValue);
         editor.apply();
     }
 
     private void restoreSuffix() {
         SharedPreferences preferences = getSharedPreferences();
-        viewModel.updateSuffix(preferences.getString(getString(R.string.key_suffix), ""));
+        viewModel.updateSuffix(preferences.getString(KEY_SUFFIX, ""));
     }
 
     private SharedPreferences getSharedPreferences() {
@@ -109,11 +109,7 @@ public class MainActivity extends AppCompatActivity implements DarkModeDialogFra
     }
 
     private void showNightModeDialog() {
-        DarkModeDialogFragment dialog = new DarkModeDialogFragment();
-        Bundle arguments = new Bundle();
-        arguments.putInt(DarkModeDialogFragment.KEY_INITIAL_CHOICE_VALUE, getCurrentAppDarkMode().value);
-        dialog.setArguments(arguments);
-        dialog.show(getSupportFragmentManager(), "darkMode");
+        DarkModeDialogFragment.newInstance(getCurrentAppDarkMode()).show(getSupportFragmentManager(), "darkMode");
     }
 
     @Override
