@@ -56,9 +56,6 @@ public class MainViewModel extends ViewModel {
     @NonNull
     private final SingleEventMutableLiveData<EventKey> eventKeyData = new SingleEventMutableLiveData<>();
 
-    @NonNull
-    private final MutableLiveData<DarkMode> darkModeData = new MutableLiveData<>();
-
     public MainViewModel() {
         textData.addSource(plainTextBundleData, (s) -> updatePreviewText());
         textData.addSource(musicArtistTextData, (s) -> updatePreviewText());
@@ -118,11 +115,6 @@ public class MainViewModel extends ViewModel {
     @NonNull
     public SingleEventLiveData<EventKey> eventKey() {
         return eventKeyData;
-    }
-
-    @NonNull
-    public LiveData<DarkMode> darkMode() {
-        return darkModeData;
     }
 
     public void updateIsPreviewTextRaw(boolean isRaw) {
@@ -186,10 +178,6 @@ public class MainViewModel extends ViewModel {
 
     public void navigate(@NonNull EventKey eventKey) {
         eventKeyData.postValue(eventKey);
-    }
-
-    public void updateDarkMode(@NonNull DarkMode mode) {
-        darkModeData.postValue(mode);
     }
 
     private void updatePreviewText() {

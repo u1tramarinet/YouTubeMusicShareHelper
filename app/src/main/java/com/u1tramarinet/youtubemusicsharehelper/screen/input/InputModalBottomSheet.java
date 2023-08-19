@@ -1,6 +1,7 @@
 package com.u1tramarinet.youtubemusicsharehelper.screen.input;
 
 import android.os.Bundle;
+import android.text.Editable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -73,6 +74,7 @@ public class InputModalBottomSheet extends BottomSheetDialogFragment {
     public void onResume() {
         super.onResume();
         focusAndShowIme(binding.input);
+        binding.input.post(this::moveCursorToEnd);
     }
 
     @Override
@@ -89,6 +91,11 @@ public class InputModalBottomSheet extends BottomSheetDialogFragment {
     private void clearFocusAndHideIme(View view) {
         WindowCompat.getInsetsController(requireActivity().getWindow(), view).hide(WindowInsetsCompat.Type.ime());
         view.clearFocus();
+    }
+
+    private void moveCursorToEnd() {
+        Editable editable = binding.input.getEditableText();
+        binding.input.setSelection((editable != null) ? editable.toString().length() : 0);
     }
 
     private void navigate(@NonNull EventKey eventKey) {

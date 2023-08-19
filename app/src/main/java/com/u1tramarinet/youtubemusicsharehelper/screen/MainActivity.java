@@ -1,20 +1,23 @@
 package com.u1tramarinet.youtubemusicsharehelper.screen;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.ViewModelProvider;
-
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.Menu;
 
-import com.u1tramarinet.youtubemusicsharehelper.databinding.ActivityMainBinding;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
+
 import com.u1tramarinet.youtubemusicsharehelper.R;
+import com.u1tramarinet.youtubemusicsharehelper.databinding.ActivityMainBinding;
+import com.u1tramarinet.youtubemusicsharehelper.screen.darkmode.DarkMode;
+import com.u1tramarinet.youtubemusicsharehelper.screen.darkmode.DarkModeDialogFragment;
+import com.u1tramarinet.youtubemusicsharehelper.screen.darkmode.DarkModeViewModel;
 
 import java.util.Arrays;
 
-public class MainActivity extends AppCompatActivity implements DarkModeDialogFragment.DarkModeDialogListener {
+public class MainActivity extends AppCompatActivity {
     private static final String KEY_SUFFIX = "suffix";
     private MainViewModel viewModel;
     private ActivityMainBinding binding;
@@ -38,8 +41,9 @@ public class MainActivity extends AppCompatActivity implements DarkModeDialogFra
         viewModel = new ViewModelProvider(this).get(MainViewModel.class);
         viewModel.suffixText().observe(this, this::saveSuffix);
         viewModel.shareEvent().observe(this, this::shareContent);
-        viewModel.darkMode().observe(this, this::setAppNightMode);
-        viewModel.updateDarkMode(getCurrentAppDarkMode());
+        DarkModeViewModel darkModeViewModel = new ViewModelProvider(this).get(DarkModeViewModel.class);
+        darkModeViewModel.darkMode().observe(this, this::setAppNightMode);
+        darkModeViewModel.updateDarkMode(getCurrentAppDarkMode());
 
         handleIntent(getIntent());
         restoreSuffix();
@@ -110,10 +114,5 @@ public class MainActivity extends AppCompatActivity implements DarkModeDialogFra
 
     private void showNightModeDialog() {
         DarkModeDialogFragment.newInstance(getCurrentAppDarkMode()).show(getSupportFragmentManager(), "darkMode");
-    }
-
-    @Override
-    public void switchDarkMode(@NonNull DarkMode mode) {
-        viewModel.updateDarkMode(mode);
     }
 }
