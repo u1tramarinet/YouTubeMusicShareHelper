@@ -1,5 +1,7 @@
 package com.u1tramarinet.youtubemusicsharehelper.util.event;
 
+import android.util.Log;
+
 import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -11,7 +13,9 @@ import androidx.lifecycle.Observer;
 import java.util.HashMap;
 import java.util.Map;
 
-/** @noinspection unused*/
+/**
+ * @noinspection unused
+ */
 public class SingleEventLiveData<T> {
     private final MutableLiveData<SingleEvent<T>> innerLiveData;
     @NonNull
@@ -101,10 +105,12 @@ public class SingleEventLiveData<T> {
     protected Observer<SingleEvent<T>> wrapObserver(@NonNull Observer<? super T> observer) {
         Observer<SingleEvent<T>> wrapObserver = t -> {
             try {
-                T value = t.get();
+                T value = t.get(observerMap.size());
                 observer.onChanged(value);
+                Log.d(SingleEventLiveData.class.getSimpleName(), "onChanged() notified");
             } catch (IllegalStateException e) {
                 // NOP
+                Log.d(SingleEventLiveData.class.getSimpleName(), "onChanged() not notified e=" + e);
             }
         };
         observerMap.put(observer, wrapObserver);

@@ -51,7 +51,7 @@ public class MainViewModel extends ViewModel {
     private final MediatorLiveData<ShareEnabledState> shareButtonEnabledStateData = new MediatorLiveData<>();
 
     @NonNull
-    private final MutableLiveData<Bundle> shareEventData = new MutableLiveData<>();
+    private final SingleEventMutableLiveData<Bundle> shareEventData = new SingleEventMutableLiveData<>();
 
     @NonNull
     private final SingleEventMutableLiveData<EventKey> eventKeyData = new SingleEventMutableLiveData<>();
@@ -108,7 +108,7 @@ public class MainViewModel extends ViewModel {
     }
 
     @NonNull
-    public LiveData<Bundle> shareEvent() {
+    public SingleEventLiveData<Bundle> shareEvent() {
         return shareEventData;
     }
 
@@ -152,12 +152,12 @@ public class MainViewModel extends ViewModel {
         imageUriData.postValue(null);
     }
 
-    public void handlePlainText(Bundle extras) {
+    public void updatePlainTextFromBundle(Bundle extras) {
         musicArtistTextData.postValue("");
         plainTextBundleData.postValue(extras);
     }
 
-    public void handleImage(Uri uri) {
+    public void updateImageFromUri(Uri uri) {
         imageUriData.postValue(uri);
     }
 
@@ -187,15 +187,21 @@ public class MainViewModel extends ViewModel {
             return;
         }
         String artist = musicArtistTextData.getValue();
+        artist = (artist != null) ? artist : "";
         extra.putString(MainModel.EXTRA_ARTIST, artist);
         boolean isRaw = Optional.ofNullable(isPreviewTextRawData.getValue()).orElse(false);
         String musicInfo = model.obtainText(extra, isRaw);
         String suffix = Optional.ofNullable(textSuffixData.getValue()).orElse("");
+        String artistTag = (artist.isEmpty()) ? "" : "#" + artist;
+        String newLine = "";
         String spacer = "";
         if (!musicInfo.isEmpty() && !suffix.isEmpty()) {
-            spacer = "\n";
+            newLine = "\n";
         }
-        textData.postValue(musicInfo + spacer + suffix);
+        if (!suffix.isEmpty() && !artistTag.isEmpty()) {
+            spacer = " ";
+        }
+        textData.postValue(musicInfo + newLine + suffix + spacer + artistTag);
     }
 
     private void updateClearTextButtonEnabled(@Nullable String text) {

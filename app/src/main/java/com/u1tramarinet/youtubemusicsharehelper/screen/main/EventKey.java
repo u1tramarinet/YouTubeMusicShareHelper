@@ -8,6 +8,7 @@ import com.u1tramarinet.youtubemusicsharehelper.R;
 public enum EventKey {
     Suffix("SUFFIX", R.string.suffix),
     Artist("ARTIST", R.string.artist),
+    ImagePicker("IMAGE_PICKER", R.string.image_picker),
     ;
     private static final String KEY_SUFFIX = "com.u1tramarinet.youtubemusicsharehelper.screen.main";
     public final int titleRes;

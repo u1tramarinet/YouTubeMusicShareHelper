@@ -3,8 +3,13 @@ package com.u1tramarinet.youtubemusicsharehelper.screen;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
+import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.PickVisualMediaRequest;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
@@ -14,6 +19,7 @@ import com.u1tramarinet.youtubemusicsharehelper.databinding.ActivityMainBinding;
 import com.u1tramarinet.youtubemusicsharehelper.screen.darkmode.DarkMode;
 import com.u1tramarinet.youtubemusicsharehelper.screen.darkmode.DarkModeDialogFragment;
 import com.u1tramarinet.youtubemusicsharehelper.screen.darkmode.DarkModeViewModel;
+import com.u1tramarinet.youtubemusicsharehelper.screen.main.EventKey;
 
 import java.util.Arrays;
 
@@ -21,6 +27,13 @@ public class MainActivity extends AppCompatActivity {
     private static final String KEY_SUFFIX = "suffix";
     private MainViewModel viewModel;
     private ActivityMainBinding binding;
+    private final ActivityResultLauncher<PickVisualMediaRequest> pickMediaResultLauncher = registerForActivityResult(new ActivityResultContracts.PickVisualMedia(), uri -> {
+        if (uri != null) {
+            viewModel.updateImageFromUri(uri);
+        } else {
+            Toast.makeText(this, "Canceled image selection...", Toast.LENGTH_SHORT).show();
+        }
+    });
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +54,7 @@ public class MainActivity extends AppCompatActivity {
         viewModel = new ViewModelProvider(this).get(MainViewModel.class);
         viewModel.suffixText().observe(this, this::saveSuffix);
         viewModel.shareEvent().observe(this, this::shareContent);
+        viewModel.eventKey().observe(this, this::navigate);
         DarkModeViewModel darkModeViewModel = new ViewModelProvider(this).get(DarkModeViewModel.class);
         darkModeViewModel.darkMode().observe(this, this::setAppNightMode);
         darkModeViewModel.updateDarkMode(getCurrentAppDarkMode());
@@ -64,9 +78,9 @@ public class MainActivity extends AppCompatActivity {
         }
 
         if ("text/plain".equals(type)) {
-            viewModel.handlePlainText(intent.getExtras());
+            viewModel.updatePlainTextFromBundle(intent.getExtras());
         } else if (type.startsWith("image/")) {
-            viewModel.handleImage(intent.getParcelableExtra(Intent.EXTRA_STREAM));
+            viewModel.updateImageFromUri(intent.getParcelableExtra(Intent.EXTRA_STREAM));
         }
     }
 
@@ -114,5 +128,18 @@ public class MainActivity extends AppCompatActivity {
 
     private void showNightModeDialog() {
         DarkModeDialogFragment.newInstance(getCurrentAppDarkMode()).show(getSupportFragmentManager(), "darkMode");
+    }
+
+    private void navigate(@NonNull EventKey eventKey) {
+        Log.d(MainActivity.class.getSimpleName(), "navigate() eventKey=" + eventKey);
+        if (eventKey == EventKey.ImagePicker) {
+            showImagePicker();
+        }
+    }
+
+    private void showImagePicker() {
+        pickMediaResultLauncher.launch(new PickVisualMediaRequest.Builder()
+                .setMediaType(ActivityResultContracts.PickVisualMedia.ImageOnly.INSTANCE)
+                .build());
     }
 }

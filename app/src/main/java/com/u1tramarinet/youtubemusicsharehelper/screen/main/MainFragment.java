@@ -6,6 +6,12 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -13,13 +19,6 @@ import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.palette.graphics.Palette;
-
-import android.os.Handler;
-import android.os.Looper;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 
 import com.u1tramarinet.youtubemusicsharehelper.R;
 import com.u1tramarinet.youtubemusicsharehelper.databinding.FragmentMainBinding;
@@ -56,6 +55,7 @@ public class MainFragment extends Fragment {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_main, container, false);
         binding.setLifecycleOwner(getViewLifecycleOwner());
         binding.setViewModel(viewModel);
+        binding.setContext(requireContext());
         return binding.getRoot();
     }
 
@@ -132,6 +132,9 @@ public class MainFragment extends Fragment {
             case Artist:
                 initialValue = viewModel.artistText().getValue();
                 break;
+            case ImagePicker:
+                // NOP(handle in Activity)
+                return;
             default:
                 return;
         }
