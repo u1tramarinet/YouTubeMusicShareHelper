@@ -15,6 +15,7 @@ import androidx.lifecycle.ViewModel;
 import com.u1tramarinet.youtubemusicsharehelper.model.MainModel;
 import com.u1tramarinet.youtubemusicsharehelper.screen.main.EventKey;
 import com.u1tramarinet.youtubemusicsharehelper.screen.main.ShareEnabledState;
+import com.u1tramarinet.youtubemusicsharehelper.util.TextUtil;
 import com.u1tramarinet.youtubemusicsharehelper.util.event.SingleEventLiveData;
 import com.u1tramarinet.youtubemusicsharehelper.util.event.SingleEventMutableLiveData;
 
@@ -192,7 +193,7 @@ public class MainViewModel extends ViewModel {
         boolean isRaw = Optional.ofNullable(isPreviewTextRawData.getValue()).orElse(false);
         String musicInfo = model.obtainText(extra, isRaw);
         String suffix = Optional.ofNullable(textSuffixData.getValue()).orElse("");
-        String artistTag = (artist.isEmpty()) ? "" : "#" + artist;
+        String artistTag = (artist.isEmpty()) ? "" : TextUtil.createHashTag(artist);
         String newLine = "";
         String spacer = "";
         if (!musicInfo.isEmpty() && !suffix.isEmpty()) {
