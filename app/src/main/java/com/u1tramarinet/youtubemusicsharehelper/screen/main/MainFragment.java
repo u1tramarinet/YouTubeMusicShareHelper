@@ -8,7 +8,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +21,7 @@ import androidx.palette.graphics.Palette;
 
 import com.u1tramarinet.youtubemusicsharehelper.R;
 import com.u1tramarinet.youtubemusicsharehelper.databinding.FragmentMainBinding;
+import com.u1tramarinet.youtubemusicsharehelper.model.history.History;
 import com.u1tramarinet.youtubemusicsharehelper.screen.MainViewModel;
 import com.u1tramarinet.youtubemusicsharehelper.screen.input.InputModalBottomSheet;
 
@@ -29,6 +29,9 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import java.util.function.Consumer;
 
 public class MainFragment extends Fragment {
@@ -123,14 +126,16 @@ public class MainFragment extends Fragment {
     }
 
     private void navigate(@NonNull EventKey eventKey) {
-        Log.d(MainFragment.class.getSimpleName(), "navigate() key=" + eventKey.getKey());
         String initialValue;
+        List<History> histories;
         switch (eventKey) {
             case Suffix:
-                initialValue = viewModel.suffixText().getValue();
+                initialValue = Optional.ofNullable(viewModel.suffixText().getValue()).orElse("");
+                histories = Optional.ofNullable(viewModel.suffixHistory().getValue()).orElse(new ArrayList<>());
                 break;
             case Artist:
-                initialValue = viewModel.artistText().getValue();
+                initialValue = Optional.ofNullable(viewModel.artistText().getValue()).orElse("");
+                histories = Optional.ofNullable(viewModel.artistHistory().getValue()).orElse(new ArrayList<>());
                 break;
             case ImagePicker:
                 // NOP(handle in Activity)
@@ -139,7 +144,7 @@ public class MainFragment extends Fragment {
                 return;
         }
         String title = getString(eventKey.titleRes);
-        InputModalBottomSheet inputModalBottomSheet = InputModalBottomSheet.newInstance(eventKey.getKey(), title, (initialValue != null) ? initialValue : "",
+        InputModalBottomSheet inputModalBottomSheet = InputModalBottomSheet.newInstance(eventKey.getKey(), title, initialValue, histories,
                 getChildFragmentManager(), this, (contentKey, value) -> viewModel.updateParameter(contentKey, value));
         inputModalBottomSheet.show(getChildFragmentManager(), null);
     }

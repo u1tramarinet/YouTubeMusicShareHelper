@@ -23,6 +23,9 @@ import com.u1tramarinet.youtubemusicsharehelper.screen.main.EventKey;
 
 import java.util.Arrays;
 
+import dagger.hilt.android.AndroidEntryPoint;
+
+@AndroidEntryPoint
 public class MainActivity extends AppCompatActivity {
     private static final String KEY_SUFFIX = "suffix";
     private MainViewModel viewModel;

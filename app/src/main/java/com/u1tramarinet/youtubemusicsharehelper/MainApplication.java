@@ -5,6 +5,9 @@ import android.os.Build;
 
 import com.google.android.material.color.DynamicColors;
 
+import dagger.hilt.android.HiltAndroidApp;
+
+@HiltAndroidApp
 public class MainApplication extends Application {
 
     @Override

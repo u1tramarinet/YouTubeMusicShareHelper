@@ -9,12 +9,15 @@ import com.u1tramarinet.youtubemusicsharehelper.model.parser.result.Music;
 import com.u1tramarinet.youtubemusicsharehelper.model.parser.result.Text;
 import com.u1tramarinet.youtubemusicsharehelper.util.TextUtil;
 
-public class MainModel {
+public class MainRepository {
     public static final String EXTRA_ARTIST = "com.u1tramarinet.youtubemusicsharehelper.artist";
     private static final Parser DEFAULT_PARSER = new Other();
     private static final Parser[] PARSERS = {new YouTubeMusic(), DEFAULT_PARSER};
 
-    public String obtainText(Bundle extras, boolean isRaw) {
+    public MainRepository() {
+    }
+
+    public String parseAndAssembleText(Bundle extras, boolean isRaw) {
         if (!isRaw) {
             for (Parser parser : PARSERS) {
                 if (parser.check(extras)) {

@@ -5,6 +5,8 @@
 
     <data>
 
+        <import type="android.view.View" />
+
         <variable
             name="viewModel"
             type="com.u1tramarinet.youtubemusicsharehelper.screen.input.InputViewModel" />
@@ -21,12 +23,52 @@
         app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
         tools:context=".screen.input.InputModalBottomSheet">
 
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/history"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:visibility="@{viewModel.history().size() > 0 ? View.VISIBLE : View.INVISIBLE}"
+            app:layout_constraintBottom_toTopOf="@id/input_outline"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/title_history"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/history" />
+
+            <androidx.legacy.widget.Space
+                android:layout_width="10dp"
+                android:layout_height="0dp" />
+
+            <HorizontalScrollView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1">
+
+                <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/history_group"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:singleLine="true"
+                    app:singleSelection="true" />
+            </HorizontalScrollView>
+
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/input_outline"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginBottom="20dp"
             android:hint="@{viewModel.title}"
+            app:endIconMode="clear_text"
             app:layout_constraintBottom_toTopOf="@id/ok_button"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
