@@ -1,0 +1,29 @@
+<resources>
+    <string name="app_name">メディア共有ヘルパー</string>
+    <string name="label_text">共有に備える</string>
+    <string name="label_image">@string/label_text</string>
+    <string name="share">共有</string>
+    <string name="share_x">%sを共有</string>
+    <string name="shared_x">共有する%s</string>
+    <string name="and">と</string>
+    <string name="text">テキスト</string>
+    <string name="delete_text">テキストを削除</string>
+    <string name="text_empty_message">他アプリの共有選択画面から\n「%s」を選択しよう。</string>
+    <string name="image">画像</string>
+    <string name="delete_image">画像を削除</string>
+    <string name="image_empty_message">他アプリの共有選択画面から\n「%s」を選択しよう。\n\nまたはクリックして画像選択しよう。\n\n※画像のトリミングや編集には対応していません。</string>
+    <string name="suffix">定型文を指定する</string>
+    <string name="suffix_help">例: #NowPlaying</string>
+    <string name="artist">アーティスト名を指定する</string>
+    <string name="image_picker">画像を指定する</string>
+    <string name="text_raw">無加工にする</string>
+    <string name="dark_mode">ダークモード</string>
+    <string name="on">オン</string>
+    <string name="off">オフ</string>
+    <string name="use_battery_saver_setting">バッテリーセーバーによる設定を使う</string>
+    <string name="use_device_setting">端末の設定を使う</string>
+    <string name="action_light_mode">ライトモード</string>
+    <string name="action_dark_mode">@string/dark_mode</string>
+    <string name="action_auto_mode">オート</string>
+    <string name="history">履歴</string>
+</resources>
