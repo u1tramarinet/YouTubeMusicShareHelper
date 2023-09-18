@@ -48,10 +48,13 @@ public class YouTubeMusic implements Parser {
         if (defaultValue == null) {
             defaultValue = "";
         }
-        if (matcher.groupCount() < regex.titleGroupIndex + 1) {
+        if (matcher.groupCount() == 0) {
             return defaultValue;
         }
-        String title = matcher.group(regex.titleGroupIndex);
+        if (regex.titleGroupPosition <= 0 || matcher.groupCount() < regex.titleGroupPosition) {
+            return defaultValue;
+        }
+        String title = matcher.group(regex.titleGroupPosition);
         return (title != null) ? title : defaultValue;
     }
 
@@ -60,10 +63,13 @@ public class YouTubeMusic implements Parser {
         if (defaultValue == null) {
             defaultValue = "";
         }
-        if (matcher.groupCount() < regex.artistGroupIndex + 1) {
+        if (matcher.groupCount() == 0) {
             return defaultValue;
         }
-        String artist = matcher.group(regex.artistGroupIndex);
+        if (regex.artistGroupPosition <= 0 || matcher.groupCount() < regex.artistGroupPosition) {
+            return defaultValue;
+        }
+        String artist = matcher.group(regex.artistGroupPosition);
         return (artist != null) ? artist : defaultValue;
     }
 
@@ -74,13 +80,13 @@ public class YouTubeMusic implements Parser {
 
     private static class YouTubeMusicRegex {
         final String text;
-        final int titleGroupIndex;
-        final int artistGroupIndex;
+        final int titleGroupPosition;
+        final int artistGroupPosition;
 
-        YouTubeMusicRegex(String text, int titleGroupIndex, int artistGroupIndex) {
+        YouTubeMusicRegex(String text, int titleGroupPosition, int artistGroupPosition) {
             this.text = text;
-            this.titleGroupIndex = titleGroupIndex;
-            this.artistGroupIndex = artistGroupIndex;
+            this.titleGroupPosition = titleGroupPosition;
+            this.artistGroupPosition = artistGroupPosition;
         }
     }
 }
