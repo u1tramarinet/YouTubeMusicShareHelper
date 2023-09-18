@@ -66,11 +66,13 @@
                     android:id="@+id/preview_text_help"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:autoSizeTextType="uniform"
                     android:text="@{context.getString(R.string.text_empty_message, context.getString(R.string.label_text))}"
                     android:textAlignment="center"
                     android:textAppearance="?attr/textAppearanceBodySmall"
-                    android:textColor="?android:attr/textColorHint"
-                    android:visibility="@{viewModel.previewText().toString().length() > 0 ? View.GONE : View.VISIBLE}" />
+                    android:textColor="?android:attr/textColorTertiary"
+                    android:visibility="@{viewModel.previewText().toString().length() > 0 ? View.GONE : View.VISIBLE}"
+                    tools:text="hint" />
             </LinearLayout>
 
         </com.google.android.material.card.MaterialCardView>
@@ -117,12 +119,14 @@
                         android:id="@+id/preview_image_help"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
+                        android:autoSizeTextType="uniform"
                         android:gravity="center"
                         android:text="@{context.getString(R.string.image_empty_message, context.getString(R.string.label_image))}"
                         android:textAlignment="center"
                         android:textAppearance="?attr/textAppearanceBodySmall"
-                        android:textColor="?android:attr/textColorHint"
-                        android:visibility="@{viewModel.previewImageUri() != null ? View.GONE : View.VISIBLE}" />
+                        android:textColor="?android:attr/textColorTertiary"
+                        android:visibility="@{viewModel.previewImageUri() != null ? View.GONE : View.VISIBLE}"
+                        tools:text="hint" />
 
                 </FrameLayout>
             </LinearLayout>
