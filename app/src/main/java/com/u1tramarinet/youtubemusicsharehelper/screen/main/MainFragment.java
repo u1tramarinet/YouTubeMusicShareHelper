@@ -19,6 +19,11 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.palette.graphics.Palette;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdSize;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
+import com.u1tramarinet.youtubemusicsharehelper.BuildConfig;
 import com.u1tramarinet.youtubemusicsharehelper.R;
 import com.u1tramarinet.youtubemusicsharehelper.databinding.FragmentMainBinding;
 import com.u1tramarinet.youtubemusicsharehelper.model.history.History;
@@ -60,6 +65,20 @@ public class MainFragment extends Fragment {
         binding.setViewModel(viewModel);
         binding.setContext(requireContext());
         return binding.getRoot();
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        MobileAds.initialize(requireActivity(), initializationStatus -> {
+        });
+        AdView adView = new AdView(requireContext());
+        adView.setAdSize(AdSize.BANNER);
+        adView.setAdUnitId(BuildConfig.ADMOB_APP_ID);
+        binding.adViewContainer.addView(adView);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        adView.loadAd(adRequest);
     }
 
     @Override

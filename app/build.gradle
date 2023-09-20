@@ -19,10 +19,25 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    def localProperties = new Properties()
+    localProperties.load(project.rootProject.file('local.properties').newDataInputStream())
+
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+
+            //noinspection GroovyConstructorNamedArguments
+            manifestPlaceholders = [admobAppId: localProperties.getProperty("admob.app.id.manifest")]
+            buildConfigField("String", "ADMOB_APP_ID", "\"${localProperties.getProperty("admob.app.id.layout")}\"")
+        }
+        debug {
+            applicationIdSuffix ".debug"
+            debuggable true
+
+            //noinspection GroovyConstructorNamedArguments
+            manifestPlaceholders = [admobAppId: localProperties.getProperty("admob.app.id.manifest.test")]
+            buildConfigField("String", "ADMOB_APP_ID", "\"${localProperties.getProperty("admob.app.id.layout.test")}\"")
         }
     }
     compileOptions {
@@ -68,6 +83,7 @@ dependencies {
     implementation 'androidx.palette:palette:1.0.0'
     implementation "com.google.dagger:hilt-android:$hilt_version"
     kapt "com.google.dagger:hilt-compiler:$hilt_version"
+    implementation 'com.google.android.gms:play-services-ads:22.4.0'
 
     testImplementation 'junit:junit:4.13.2'
     testImplementation 'org.robolectric:robolectric:4.9'
