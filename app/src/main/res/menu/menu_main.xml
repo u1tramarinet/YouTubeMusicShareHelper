@@ -24,4 +24,10 @@
         android:icon="@drawable/baseline_auto_mode_24"
         android:title="@string/action_auto_mode"
         app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/action_option"
+        android:icon="@drawable/baseline_more_vert_24"
+        android:title="@string/action_option"
+        app:showAsAction="always" />
 </menu>

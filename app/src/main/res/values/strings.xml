@@ -25,5 +25,7 @@
     <string name="action_light_mode">Light mode</string>
     <string name="action_dark_mode">@string/dark_mode</string>
     <string name="action_auto_mode">Auto</string>
+    <string name="action_option">Option</string>
+    <string name="action_oss">Open Source Software</string>
     <string name="history">History</string>
 </resources>

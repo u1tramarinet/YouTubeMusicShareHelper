@@ -5,6 +5,8 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.View;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -12,8 +14,10 @@ import androidx.activity.result.PickVisualMediaRequest;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.PopupMenu;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.google.android.gms.oss.licenses.OssLicensesMenuActivity;
 import com.u1tramarinet.youtubemusicsharehelper.R;
 import com.u1tramarinet.youtubemusicsharehelper.databinding.ActivityMainBinding;
 import com.u1tramarinet.youtubemusicsharehelper.screen.darkmode.DarkMode;
@@ -50,6 +54,8 @@ public class MainActivity extends AppCompatActivity {
             if (Arrays.stream(targetItemIds).anyMatch(itemId -> (itemId == clickedItemId))) {
                 showNightModeDialog();
                 return true;
+            } else if (clickedItemId == R.id.action_option) {
+                showOptionPopup(binding.getRoot().findViewById(R.id.action_option));
             }
             return false;
         });
@@ -131,6 +137,24 @@ public class MainActivity extends AppCompatActivity {
 
     private void showNightModeDialog() {
         DarkModeDialogFragment.newInstance(getCurrentAppDarkMode()).show(getSupportFragmentManager(), "darkMode");
+    }
+
+    private void showOptionPopup(View v) {
+        PopupMenu popupMenu = new PopupMenu(this, v);
+        popupMenu.setOnMenuItemClickListener(item -> {
+            if (item.getItemId() == R.id.action_oss) {
+                showOssLicencesMenu();
+                return true;
+            }
+            return false;
+        });
+        MenuInflater inflater = popupMenu.getMenuInflater();
+        inflater.inflate(R.menu.menu_options, popupMenu.getMenu());
+        popupMenu.show();
+    }
+
+    private void showOssLicencesMenu() {
+        startActivity(new Intent(this, OssLicensesMenuActivity.class));
     }
 
     private void navigate(@NonNull EventKey eventKey) {

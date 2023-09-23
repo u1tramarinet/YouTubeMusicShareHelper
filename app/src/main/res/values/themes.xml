@@ -9,6 +9,12 @@
         <item name="bottomSheetStyle">@style/Theme.YouTubeMusicShareHelper.BottomSheetDialog</item>
     </style>
 
+    <style name="Theme.YouTubeMusicShareHelper.Oss" parent="Theme.Material3.DayNight">
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+    </style>
+
     <style name="Theme.YouTubeMusicShareHelper.BottomSheetDialog" parent="ThemeOverlay.MaterialComponents.DayNight.BottomSheetDialog">
         <item name="android:windowSoftInputMode">adjustResize</item>
         <item name="android:windowIsFloating">false</item>

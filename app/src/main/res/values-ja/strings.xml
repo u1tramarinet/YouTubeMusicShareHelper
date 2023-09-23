@@ -25,5 +25,7 @@
     <string name="action_light_mode">ライトモード</string>
     <string name="action_dark_mode">@string/dark_mode</string>
     <string name="action_auto_mode">オート</string>
+    <string name="action_option">オプション</string>
+    <string name="action_oss">オープンソースソフトウェア</string>
     <string name="history">履歴</string>
 </resources>

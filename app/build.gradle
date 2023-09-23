@@ -4,6 +4,7 @@ plugins {
     id 'com.google.dagger.hilt.android'
     id 'kotlin-android'
     id 'kotlin-kapt'
+    id 'com.google.android.gms.oss-licenses-plugin'
 }
 
 android {
@@ -28,7 +29,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
 
             //noinspection GroovyConstructorNamedArguments
-            manifestPlaceholders = [admobAppId: localProperties.getProperty("admob.app.id.manifest")]
+            manifestPlaceholders = [appIcon: "@mipmap/ic_launcher", appIconRound: "@mipmap/ic_launcher_round", admobAppId: localProperties.getProperty("admob.app.id.manifest")]
             buildConfigField("String", "ADMOB_APP_ID", "\"${localProperties.getProperty("admob.app.id.layout")}\"")
         }
         debug {
@@ -36,7 +37,7 @@ android {
             debuggable true
 
             //noinspection GroovyConstructorNamedArguments
-            manifestPlaceholders = [admobAppId: localProperties.getProperty("admob.app.id.manifest.test")]
+            manifestPlaceholders = [appIcon: "@mipmap/ic_launcher_debug", appIconRound: "@mipmap/ic_launcher_debug_round", admobAppId: localProperties.getProperty("admob.app.id.manifest.test")]
             buildConfigField("String", "ADMOB_APP_ID", "\"${localProperties.getProperty("admob.app.id.layout.test")}\"")
         }
     }
@@ -84,6 +85,7 @@ dependencies {
     implementation "com.google.dagger:hilt-android:$hilt_version"
     kapt "com.google.dagger:hilt-compiler:$hilt_version"
     implementation 'com.google.android.gms:play-services-ads:22.4.0'
+    implementation 'com.google.android.gms:play-services-oss-licenses:17.0.1'
 
     testImplementation 'junit:junit:4.13.2'
     testImplementation 'org.robolectric:robolectric:4.9'
